@@ -2,10 +2,11 @@
 
 #include "FPSCharacter.h"
 
-AFPSCharacter::AFPSCharacter()
+
+AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AFPSCharacter::MeshComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 void AFPSCharacter::BeginPlay()
