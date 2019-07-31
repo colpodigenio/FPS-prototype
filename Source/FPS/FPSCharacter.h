@@ -7,6 +7,7 @@
 #include "FPSCharacter.generated.h"
 
 class UHealthComponent;
+class UCameraComponent;
 
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
@@ -15,6 +16,8 @@ class FPS_API AFPSCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FPSCamera;
 
 public:
 	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
@@ -22,16 +25,17 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	virtual void BeginPlay() override;
 
-	//void Move(float AxisValue);
-	//void Strafe(float AxisValue);
-	//void Jump(); //how to implement second jump??
-	//void Crouch();
-	//void ToggleWalkRun();
-	//void Sprint();
-	//void FireWeapon() //executes interface function
-	//void AimWeapon() //executes interface function
-	//void ReloadWeapon() //executes interface function
-	//void UseExplosive() //or ThrowExplosive??
+	void Move(float AxisValue);
+	void Strafe(float AxisValue);
+	void Jump();
+	void Crouch();
+	void FireWeapon();
+	void StartSprint();
+	void EndSprint();
+	void ToggleWalkRun();
+	void Zoom();
+	void ReloadWeapon();
+	void UseExplosive();
+	void ShowScore();
 };
