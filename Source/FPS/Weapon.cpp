@@ -5,17 +5,17 @@
 
 
 
-void AWeapon::Fire()
+void AWeapon::Fire_Implementation()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("%s Fires"), *GetName())
 }
 
-void AWeapon::Aim()
+void AWeapon::Aim_Implementation()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("%s Aims"), *GetName())
 }
 
-void AWeapon::Reload()
+void AWeapon::Reload_Implementation()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("%s Reloads"), *GetName())
 }

@@ -8,6 +8,7 @@
 
 class UHealthComponent;
 class UCameraComponent;
+class AWeapon;
 
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
@@ -18,20 +19,39 @@ class FPS_API AFPSCharacter : public ACharacter
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	AWeapon* CurrentWeapon;
+
+	float Stamina;	// time in seconds which character can sprint
+	float StaminaMax; 
+	bool bIsSprinting;
+	bool bIsMoving;
+	bool bIsMovingForward;
+	bool bIsStrafing;
+	bool bIsRunning;
+	const float RunningMultiplier = 0.55; // walking is 2 times slower
+	float MovementMultiplier;
+	float LastMovementMultiplier;
+
+	FVector LastLocation; // TO DELETE temporary variable to determine movement speed for debug
 
 public:
 	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
+private:
 
 	void Move(float AxisValue);
 	void Strafe(float AxisValue);
-	void Jump();
-	void Crouch();
+	void NormalizeMoveStrafeVector(float &Multiplier); // this function should be called in both Move() and Strafe() function to prevent increased speed while moving and strafing same time
+	void TryJump();
+	void PerformCrouch();	// maybe should be changed in future to implement it smoothly with animation. and maybe implemented as toggle
+	void PerformUnCrouch();
 	void FireWeapon();
 	void StartSprint();
+	void Sprint(float DeltaTime);
+	void RestoreStamina(float DeltaTime);
 	void EndSprint();
 	void ToggleWalkRun();
 	void Zoom();

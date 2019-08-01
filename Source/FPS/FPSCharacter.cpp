@@ -4,7 +4,10 @@
 #include "Components/HealthComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-
+#include "GameFramework/CharacterMovementComponent.h"
+#include "WeaponInterface.h"
+#include "Weapon.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AFPSCharacter::MeshComponentName))
@@ -14,11 +17,35 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
 	FPSCamera->SetupAttachment(RootComponent);
-}
 
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	JumpMaxCount = 2;
+
+	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 100.f;
+	StaminaMax = 5.0f;
+	Stamina = StaminaMax;
+	MovementMultiplier = 0.55f;
+	LastMovementMultiplier = MovementMultiplier;
+
+	bIsSprinting = false;
+	bIsMoving = false;
+	bIsStrafing = false;
+	bIsRunning = true;
+}
 void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Sprint(DeltaTime);
+	RestoreStamina(DeltaTime);
+
+	auto Location = GetActorLocation();
+	float Speed = (Location - LastLocation).Size();
+	//UE_LOG(LogTemp, Warning, TEXT("Stamina  = %f"), Stamina)
+	//UE_LOG(LogTemp, Warning, TEXT("Speed  = %f"), Speed/DeltaTime)
+	LastLocation = GetActorLocation();
+	
 }
 
 void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -30,8 +57,9 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFPSCharacter::Jump);
-	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::Crouch);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFPSCharacter::TryJump);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::PerformCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AFPSCharacter::PerformUnCrouch);
 	PlayerInputComponent->BindAction("FireWeapon", IE_Pressed, this, &AFPSCharacter::FireWeapon);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSCharacter::EndSprint);
@@ -45,52 +73,118 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void AFPSCharacter::Move(float AxisValue)
 {
-	AddMovementInput(GetCapsuleComponent()->GetForwardVector(), AxisValue);
+	float MoveValue = MovementMultiplier * AxisValue;
+	NormalizeMoveStrafeVector(MoveValue);
+	AddMovementInput(GetCapsuleComponent()->GetForwardVector(), MoveValue);
+	AxisValue == 0.0f ? bIsMoving = false : bIsMoving = true;
+	AxisValue > 0.0f ? bIsMovingForward = true : bIsMovingForward = false;
 }
 
 void AFPSCharacter::Strafe(float AxisValue)
 {
-	AddMovementInput(GetCapsuleComponent()->GetRightVector(), AxisValue);
+	if (bIsSprinting) return;
+	float StrafeValue = MovementMultiplier * AxisValue;
+	NormalizeMoveStrafeVector(StrafeValue);
+	AddMovementInput(GetCapsuleComponent()->GetRightVector(), StrafeValue);
+	AxisValue == 0.0f ? bIsStrafing = false : bIsStrafing = true;		
 }
 
-void AFPSCharacter::Jump()
+void AFPSCharacter::NormalizeMoveStrafeVector(float &Multiplier)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Jump"))
+	if (bIsMoving && bIsStrafing)
+		Multiplier /= UKismetMathLibrary::Sqrt(2);
 }
 
-void AFPSCharacter::Crouch()
+void AFPSCharacter::TryJump()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Crouch"))
+	if (Stamina > 0.25)
+	{
+		Jump();
+		Stamina -= 0.25;
+	}
 }
 
-void AFPSCharacter::FireWeapon()
+void AFPSCharacter::PerformCrouch()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FireWeapon"))
+	Crouch();
+	MovementMultiplier = 1.0f;
+}
+
+void AFPSCharacter::PerformUnCrouch()
+{
+	UnCrouch();
+	MovementMultiplier = LastMovementMultiplier;
 }
 
 void AFPSCharacter::StartSprint()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartSprint"))
+	if (!bIsStrafing && bIsMovingForward && Stamina > 0.0f)
+	{
+		bIsSprinting = true;
+		MovementMultiplier = 1.0f;
+	}
+}
+
+void AFPSCharacter::Sprint(float DeltaTime)
+{
+	if (GetCharacterMovement()->IsFalling() || Stamina <= 0.0f)
+		EndSprint();
+	if (bIsSprinting && Stamina > 0)
+		Stamina -= DeltaTime;
+}
+
+void AFPSCharacter::RestoreStamina(float DeltaTime)
+{
+	if (!bIsSprinting && !GetCharacterMovement()->IsFalling() && Stamina < StaminaMax)
+	{
+		if (bIsRunning)
+			Stamina += DeltaTime;
+		else
+			Stamina += 2 * DeltaTime;
+		if (Stamina > StaminaMax)
+			Stamina = StaminaMax;
+	}
 }
 
 void AFPSCharacter::EndSprint()
 {
-	UE_LOG(LogTemp, Warning, TEXT("EndSprint"))
+	bIsSprinting = false;
+	MovementMultiplier = LastMovementMultiplier;
 }
 
 void AFPSCharacter::ToggleWalkRun()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ToggleWalkRun"))
+	if (bIsCrouched) return;
+
+	if (bIsRunning)
+	{
+		MovementMultiplier = 0.5f * RunningMultiplier;
+		bIsRunning = false;
+	}
+	else
+	{
+		MovementMultiplier = RunningMultiplier;
+		bIsRunning = true;
+	}
+	LastMovementMultiplier = MovementMultiplier;
+}
+
+void AFPSCharacter::FireWeapon()
+{
+	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
+		IWeaponInterface::Execute_Fire(CurrentWeapon);
 }
 
 void AFPSCharacter::Zoom()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Zoom"))
+	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
+		IWeaponInterface::Execute_Aim(CurrentWeapon);
 }
 
 void AFPSCharacter::ReloadWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ReloadWeapon"))
+	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
+		IWeaponInterface::Execute_Reload(CurrentWeapon);
 }
 
 void AFPSCharacter::UseExplosive()

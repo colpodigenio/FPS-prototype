@@ -22,11 +22,11 @@ class FPS_API IWeaponInterface
 
 public:
 
-	UFUNCTION()
-	virtual void Fire() = 0;
-	UFUNCTION()
-	virtual void Aim() = 0;
-	UFUNCTION()
-	virtual void Reload() = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "WeaponInterface")
+	void Fire();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "WeaponInterface")
+	void Aim();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "WeaponInterface")
+	void Reload();
 	
 };

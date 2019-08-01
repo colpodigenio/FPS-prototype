@@ -14,10 +14,7 @@ class FPS_API AWeapon : public APickup, public IWeaponInterface
 	
 public:
 
-	UFUNCTION()
-	virtual void Fire() override;
-	UFUNCTION()
-	virtual void Aim() override;
-	UFUNCTION()
-	virtual void Reload() override;
+	virtual void Fire_Implementation() override;
+	virtual void Aim_Implementation() override;
+	virtual void Reload_Implementation() override;
 };
