@@ -54,18 +54,22 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta)
 
 void UHealthComponent::StartRegenerateHealthTimer()
 {
-	RegenerationDuration = 30;
+	RegenerationDuration = 5;
 	bIsRegenerating = true;
 	if (GetOwner())
-		GetOwner()->GetWorldTimerManager().SetTimer(RegenerateHealthTimer, this, &UHealthComponent::RegenerateHealth, 1.0f, false);
+		GetOwner()->GetWorldTimerManager().SetTimer(RegenerateHealthTimer, this, &UHealthComponent::RegenerateHealth, 1.0f, true);
 }
 
 void UHealthComponent::RegenerateHealth()
 {
 	Health++;
 	RegenerationDuration--;
-	if(RegenerationDuration <= 0)
+	if (RegenerationDuration <= 0)
+	{
 		GetOwner()->GetWorldTimerManager().ClearTimer(RegenerateHealthTimer);
+		bIsRegenerating = false;
+		StartRevertHealthToMaxTimer();
+	}
 }
 
 void UHealthComponent::StartRevertHealthToMaxTimer()
@@ -73,7 +77,6 @@ void UHealthComponent::StartRevertHealthToMaxTimer()
 	if (!bIsRegenerating && Health > HealthMax)
 		if (GetOwner())
 			GetOwner()->GetWorldTimerManager().SetTimer(RevertHealthToMaxTimer, this, &UHealthComponent::RevertHealthToMax, 1.0f, true);
-
 }
 
 void UHealthComponent::RevertHealthToMax()

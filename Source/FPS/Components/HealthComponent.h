@@ -25,6 +25,7 @@ class FPS_API UHealthComponent : public UActorComponent
 	FTimerHandle RevertHealthToMaxTimer;
 
 	void RegenerateHealth(); 
+	void StartRevertHealthToMaxTimer();
 	void RevertHealthToMax();
 	void Die();
 
@@ -48,6 +49,4 @@ public:
 	void ApplyDamage(int32 DamageDelta);
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
 	void StartRegenerateHealthTimer(); // this function is called by regeneration power up
-	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void StartRevertHealthToMaxTimer();
 };
