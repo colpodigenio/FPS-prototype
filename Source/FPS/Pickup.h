@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Pickup.generated.h"
 
-UCLASS()
+UCLASS(abstract)
 class FPS_API APickup : public AActor
 {
 	GENERATED_BODY()

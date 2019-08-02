@@ -48,7 +48,8 @@ private:
 	void TryJump();
 	void PerformCrouch();	// maybe should be changed in future to implement it smoothly with animation. and maybe implemented as toggle
 	void PerformUnCrouch();
-	void FireWeapon();
+	void StartFiringWeapon();
+	void StopFiringWeapon();
 	void StartSprint();
 	void Sprint(float DeltaTime);
 	void RestoreStamina(float DeltaTime);
@@ -57,5 +58,9 @@ private:
 	void Zoom();
 	void ReloadWeapon();
 	void UseExplosive();
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void ShowScore();
 };

@@ -60,7 +60,8 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFPSCharacter::TryJump);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::PerformCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AFPSCharacter::PerformUnCrouch);
-	PlayerInputComponent->BindAction("FireWeapon", IE_Pressed, this, &AFPSCharacter::FireWeapon);
+	PlayerInputComponent->BindAction("FireWeapon", IE_Pressed, this, &AFPSCharacter::StartFiringWeapon);
+	PlayerInputComponent->BindAction("FireWeapon", IE_Released, this, &AFPSCharacter::StopFiringWeapon);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSCharacter::EndSprint);
 	PlayerInputComponent->BindAction("ToggleWalkRun", IE_Pressed, this, &AFPSCharacter::ToggleWalkRun);
@@ -169,22 +170,28 @@ void AFPSCharacter::ToggleWalkRun()
 	LastMovementMultiplier = MovementMultiplier;
 }
 
-void AFPSCharacter::FireWeapon()
+void AFPSCharacter::StartFiringWeapon()
 {
-	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
-		IWeaponInterface::Execute_Fire(CurrentWeapon);
+	if (CurrentWeapon)
+		CurrentWeapon->StartFire();
+}
+
+void AFPSCharacter::StopFiringWeapon()
+{
+	if (CurrentWeapon)
+		CurrentWeapon->StopFire();
 }
 
 void AFPSCharacter::Zoom()
 {
-	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
-		IWeaponInterface::Execute_Aim(CurrentWeapon);
+	if (CurrentWeapon)
+		CurrentWeapon->Aim();
 }
 
 void AFPSCharacter::ReloadWeapon()
 {
-	if (CurrentWeapon && CurrentWeapon->GetClass()->ImplementsInterface(UWeaponInterface::StaticClass()))
-		IWeaponInterface::Execute_Reload(CurrentWeapon);
+	if (CurrentWeapon)
+		CurrentWeapon->StartReload();
 }
 
 void AFPSCharacter::UseExplosive()
@@ -192,7 +199,3 @@ void AFPSCharacter::UseExplosive()
 	UE_LOG(LogTemp, Warning, TEXT("UseExplosive"))
 }
 
-void AFPSCharacter::ShowScore()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ShowScore"))
-}

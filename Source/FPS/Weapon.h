@@ -4,17 +4,41 @@
 
 #include "CoreMinimal.h"
 #include "Pickup.h"
-#include "WeaponInterface.h"
 #include "Weapon.generated.h"
 
 UCLASS()
-class FPS_API AWeapon : public APickup, public IWeaponInterface
+class FPS_API AWeapon : public APickup
 {
 	GENERATED_BODY()
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* Mesh;
+
+protected:
+
+	int32 AmmoCapacity;
+	int32 AmmoMagazineCapacity;
+	int32 AmmoTotal; // ammo excluding ammo in magazine 
+	int32 AmmoInMagazine;
+	int32 DamageAmount;
+	//flost RecoilValue;
+	float FireRate; // shots in second
+	float ReloadTime; // seconds
+	float LastShotTime;
+	bool bIsReloading;
+	bool bFirstShotFired;
+
+	FTimerHandle FireTimer;
+
+	virtual void Fire();
+
 public:
 
-	virtual void Fire_Implementation() override;
-	virtual void Aim_Implementation() override;
-	virtual void Reload_Implementation() override;
+	AWeapon();
+
+	virtual void StartFire();
+	virtual void StopFire();
+	virtual void Aim();
+	virtual void StartReload();
+	virtual void Reload();
 };

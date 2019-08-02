@@ -1,21 +1,72 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Weapon.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "UnrealMathUtility.h"
 
-
-
-
-void AWeapon::Fire_Implementation()
+AWeapon::AWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Fires"), *GetName())
+	Mesh = CreateAbstractDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+
+	bIsReloading = false;
+	bFirstShotFired = false;
 }
 
-void AWeapon::Aim_Implementation()
+void AWeapon::StartFire()
+{
+	if ((AmmoTotal <= 0 && AmmoInMagazine <=0) || bIsReloading) return;
+	if (AmmoInMagazine <= 0)
+	{
+		StartReload();
+		return;
+	}
+	float ShotDelay;
+	if (bFirstShotFired)
+		ShotDelay = FMath::Max(1 / FireRate - (GetWorld()->TimeSeconds - LastShotTime), 0.0f);
+	else
+		ShotDelay = 0.0f;
+	bFirstShotFired = true;
+	GetWorldTimerManager().SetTimer(FireTimer, this, &AWeapon::Fire, 1 / FireRate, true, ShotDelay);
+}
+
+void AWeapon::Fire()
+{
+
+}
+
+void AWeapon::StopFire()
+{
+	if(GetWorldTimerManager().IsTimerActive(FireTimer))
+		GetWorldTimerManager().ClearTimer(FireTimer);
+}
+
+void AWeapon::Aim()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s Aims"), *GetName())
 }
 
-void AWeapon::Reload_Implementation()
+void AWeapon::StartReload()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Reloads"), *GetName())
+	if (bIsReloading || AmmoTotal == 0 || AmmoInMagazine == AmmoMagazineCapacity) return;
+	FTimerHandle ReloadTimer;
+	GetWorldTimerManager().SetTimer(ReloadTimer, this, &AWeapon::Reload, ReloadTime, false);
+	bIsReloading = true;
+}
+
+void AWeapon::Reload()
+{
+	int32 DeltaAmmoInMagazine = AmmoMagazineCapacity - AmmoInMagazine;
+	int32 NewAmmoTotal = AmmoTotal - DeltaAmmoInMagazine;
+	if (NewAmmoTotal < 0)
+	{
+		AmmoInMagazine += DeltaAmmoInMagazine + NewAmmoTotal;
+		AmmoTotal = 0;
+	}
+	else
+	{
+		AmmoInMagazine = AmmoMagazineCapacity;
+		AmmoTotal -= DeltaAmmoInMagazine;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%s has been reloaded. %i bullets in magazine %i bullets total"), *GetName(), AmmoInMagazine, AmmoTotal)
+	bIsReloading = false;
 }
