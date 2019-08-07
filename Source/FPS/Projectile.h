@@ -19,9 +19,12 @@ class FPS_API AProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
 
+	int32 DamageDone;
+
 public:	
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
+	void HitTarget(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
 protected:
 	virtual void BeginPlay() override;	

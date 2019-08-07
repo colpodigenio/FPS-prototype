@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Pickup.h"
+#include "FPS.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -16,7 +17,7 @@ class FPS_API AWeapon : public APickup
 
 protected:
 
-	int32 AmmoCapacity;
+	int32 AmmoTotalCapacity;
 	int32 AmmoMagazineCapacity;
 	int32 AmmoTotal; // ammo excluding ammo in magazine 
 	int32 AmmoInMagazine;
@@ -27,6 +28,7 @@ protected:
 	float LastShotTime;
 	bool bIsReloading;
 	bool bFirstShotFired;
+	EWeapon WeaponType;
 
 	FTimerHandle FireTimer;
 
@@ -36,9 +38,11 @@ public:
 
 	AWeapon();
 
+	void AddAmmo();
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void Aim();
 	virtual void StartReload();
 	virtual void Reload();
+	virtual void AddThisToCharacterInventory(AFPSCharacter* Character) override;
 };

@@ -8,9 +8,13 @@
 #include "WeaponInterface.h"
 #include "Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "AssaultRifle.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Shotgun.h"
+#include "RocketLauncher.h"
 
 AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AFPSCharacter::MeshComponentName))
+	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -32,7 +36,19 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	bIsMoving = false;
 	bIsStrafing = false;
 	bIsRunning = true;
+
+	InventorySocketName = TEXT("InventorySocket");
+
+	WeaponInventory.Emplace(EWeapon::AssaultRifle, nullptr);
+	WeaponInventory.Emplace(EWeapon::Shotgun, nullptr);
+	WeaponInventory.Emplace(EWeapon::RocketLauncher, nullptr);
 }
+
+void AFPSCharacter::BeginPlay()
+{
+	Super::BeginPlay();	
+}
+
 void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -46,6 +62,11 @@ void AFPSCharacter::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("Speed  = %f"), Speed/DeltaTime)
 	LastLocation = GetActorLocation();
 	
+}
+
+void AFPSCharacter::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
 }
 
 void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -68,7 +89,11 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &AFPSCharacter::Zoom);
 	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AFPSCharacter::ReloadWeapon);
 	PlayerInputComponent->BindAction("UseExplosive", IE_Pressed, this, &AFPSCharacter::UseExplosive);
-	PlayerInputComponent->BindAction("ShowScore", IE_Pressed, this, &AFPSCharacter::ShowScore);
+	PlayerInputComponent->BindAction("ShowHideScore", IE_Pressed, this, &AFPSCharacter::ShowScore);
+	PlayerInputComponent->BindAction("ShowHideScore", IE_Released, this, &AFPSCharacter::HideScore);
+	PlayerInputComponent->BindAction("TakeAssaultRifle", IE_Pressed, this, &AFPSCharacter::TakeAssaultRifle);
+	PlayerInputComponent->BindAction("TakeShotgun", IE_Pressed, this, &AFPSCharacter::TakeShotgun);
+	PlayerInputComponent->BindAction("TakeRocketLauncher", IE_Pressed, this, &AFPSCharacter::TakeRocketLauncher);
 
 }
 
@@ -197,5 +222,58 @@ void AFPSCharacter::ReloadWeapon()
 void AFPSCharacter::UseExplosive()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UseExplosive"))
+}
+
+void AFPSCharacter::TakeAssaultRifle()
+{
+	if (WeaponInventory.FindRef(EWeapon::AssaultRifle))
+	{
+		CurrentWeapon = WeaponInventory.FindRef(EWeapon::AssaultRifle);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
+	}
+}
+
+void AFPSCharacter::TakeShotgun()
+{
+	if (WeaponInventory.FindRef(EWeapon::Shotgun))
+	{
+		CurrentWeapon = WeaponInventory.FindRef(EWeapon::Shotgun);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
+	}
+}
+
+void AFPSCharacter::TakeRocketLauncher()
+{
+	if (WeaponInventory.FindRef(EWeapon::RocketLauncher))
+	{
+		CurrentWeapon = WeaponInventory.FindRef(EWeapon::RocketLauncher);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
+	}
+}
+
+void AFPSCharacter::ReceiveDamage(int32 DamageAmount)
+{
+	HealthComponent->ApplyDamage(DamageAmount);
+}
+
+bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeapon WeaponType)
+{
+	UE_LOG(LogTemp, Warning, TEXT("CheckIfCharacterHasWeapon"))
+	if (WeaponInventory.FindRef(WeaponType))
+		return true;
+	else
+		return false;
+}
+
+void AFPSCharacter::AddAmmoFromWeaponPickup(EWeapon WeaponType)
+{
+	WeaponInventory.FindRef(WeaponType)->AddAmmo();
+	UE_LOG(LogTemp, Warning, TEXT("AddAmmoFromWeaponPickup"))
+}
+
+void AFPSCharacter::AddWeaponFromWeaponPickup(EWeapon WeaponType)
+{
+	UE_LOG(LogTemp, Warning, TEXT("AddWeaponFromWeaponPickup"))
+	WeaponInventory.Emplace(WeaponType, SpawnWeaponFromPickup(WeaponType));
 }
 

@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AssaultRifle.h"
+#include "FPS.h"
 
 AAssaultRifle::AAssaultRifle()
 {
-	AmmoCapacity = 180;
+	WeaponType = EWeapon::AssaultRifle;
+	AmmoTotalCapacity = 180;
 	AmmoMagazineCapacity = 30;
 	AmmoTotal = 30;
 	AmmoInMagazine = 30;

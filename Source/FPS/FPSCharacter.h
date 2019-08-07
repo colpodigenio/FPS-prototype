@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FPS.h"
 #include "FPSCharacter.generated.h"
 
 class UHealthComponent;
 class UCameraComponent;
 class AWeapon;
+class USkeletalMeshComponent;
 
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
@@ -19,8 +21,14 @@ class FPS_API AFPSCharacter : public ACharacter
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
+
+	UPROPERTY(EditDefaultsOnly, meta =(AllowPrivateAccess = "true"))
+	FName InventorySocketName;
+	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AWeapon* CurrentWeapon;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TMap<EWeapon, AWeapon*> WeaponInventory;
 
 	float Stamina;	// time in seconds which character can sprint
 	float StaminaMax; 
@@ -38,7 +46,14 @@ class FPS_API AFPSCharacter : public ACharacter
 public:
 	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void ReceiveDamage(int32 DamageAmount);
+	bool CheckIfCharacterHasWeapon(EWeapon WeaponType);
+	void AddAmmoFromWeaponPickup(EWeapon WeaponType);
+	UFUNCTION(BlueprintImplementableEvent)
+	AWeapon* SpawnWeaponFromPickup(EWeapon WeaponType);
+	void AddWeaponFromWeaponPickup(EWeapon WeaponType);
 
 private:
 
@@ -58,9 +73,16 @@ private:
 	void Zoom();
 	void ReloadWeapon();
 	void UseExplosive();
+	void TakeAssaultRifle();
+	void TakeShotgun();
+	void TakeRocketLauncher();
 
 protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShowScore();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HideScore();
+
+	virtual void BeginPlay() override;
 };

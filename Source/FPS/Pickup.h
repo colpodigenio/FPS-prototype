@@ -6,18 +6,20 @@
 #include "GameFramework/Actor.h"
 #include "Pickup.generated.h"
 
-UCLASS(abstract)
+class AFPSCharacter;
+
+UCLASS()
 class FPS_API APickup : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	APickup();
+	virtual void Tick(float DeltaTime) override;	
+	virtual void AddThisToCharacterInventory(AFPSCharacter* Character);
+
 
 protected:
-	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;	
+	virtual void BeginPlay() override;	
 	
 };

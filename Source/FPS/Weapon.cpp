@@ -3,13 +3,26 @@
 #include "Weapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "UnrealMathUtility.h"
+#include "FPSCharacter.h"
 
 AWeapon::AWeapon()
 {
 	Mesh = CreateAbstractDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	RootComponent = Mesh;
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	bIsReloading = false;
 	bFirstShotFired = false;
+	WeaponType = EWeapon::None;
+}
+
+void AWeapon::AddAmmo()
+{
+	int32 NewAmmoTotal = AmmoTotal + 2 * AmmoMagazineCapacity;
+	if (NewAmmoTotal > AmmoTotalCapacity)
+		AmmoTotal = AmmoTotalCapacity;
+	else
+		AmmoTotal = NewAmmoTotal;
 }
 
 void AWeapon::StartFire()
@@ -69,4 +82,13 @@ void AWeapon::Reload()
 	}
 	UE_LOG(LogTemp, Warning, TEXT("%s has been reloaded. %i bullets in magazine %i bullets total"), *GetName(), AmmoInMagazine, AmmoTotal)
 	bIsReloading = false;
+}
+
+void AWeapon::AddThisToCharacterInventory(AFPSCharacter* Character)
+{
+	Super::AddThisToCharacterInventory(Character);
+	if (Character->CheckIfCharacterHasWeapon(WeaponType))
+		Character->AddAmmoFromWeaponPickup(WeaponType);
+	else
+		Character->AddWeaponFromWeaponPickup(WeaponType);
 }
