@@ -4,12 +4,15 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "UnrealMathUtility.h"
 #include "FPSCharacter.h"
+#include "Projectile.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AWeapon::AWeapon()
 {
-	Mesh = CreateAbstractDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MuzzleFlashEffect"));
 
 	bIsReloading = false;
 	bFirstShotFired = false;
@@ -44,7 +47,24 @@ void AWeapon::StartFire()
 
 void AWeapon::Fire()
 {
+	LastShotTime = GetWorld()->TimeSeconds;
+	ShotProjectile();
+	DecreaseAmmoAmount();
+	UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
+}
 
+void AWeapon::ShotProjectile()
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetMesh()->GetSocketTransform(TEXT("ProjectileSpawnPoint")), SpawnParams);
+}
+
+void AWeapon::DecreaseAmmoAmount()
+{
+	AmmoInMagazine--;
+	if (AmmoInMagazine <= 0)
+		StopFire();
 }
 
 void AWeapon::StopFire()

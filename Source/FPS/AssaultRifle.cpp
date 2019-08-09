@@ -2,6 +2,7 @@
 
 #include "AssaultRifle.h"
 #include "FPS.h"
+#include "Projectile.h"
 
 AAssaultRifle::AAssaultRifle()
 {
@@ -15,11 +16,3 @@ AAssaultRifle::AAssaultRifle()
 	ReloadTime = 3.0f;
 }
 
-void AAssaultRifle::Fire()
-{
-	LastShotTime = GetWorld()->TimeSeconds;
-	AmmoInMagazine--;
-	if (AmmoInMagazine <= 0)
-		StopFire();
-	UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
-}

@@ -10,8 +10,6 @@ UCLASS()
 class FPS_API AAssaultRifle : public AWeapon
 {
 	GENERATED_BODY()
-
-	virtual void Fire() override;
 	
 public:
 

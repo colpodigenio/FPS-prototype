@@ -30,6 +30,7 @@ void AProjectile::Tick(float DeltaTime)
 
 void AProjectile::HitTarget(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
+	Destroy();
 	if (Cast<AFPSCharacter>(OtherActor))
 	{
 // 		AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);

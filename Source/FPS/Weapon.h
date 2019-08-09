@@ -7,6 +7,9 @@
 #include "FPS.h"
 #include "Weapon.generated.h"
 
+class AProjectile;
+class UParticleSystemComponent;
+
 UCLASS()
 class FPS_API AWeapon : public APickup
 {
@@ -14,6 +17,8 @@ class FPS_API AWeapon : public APickup
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* MuzzleFlashEffect;
 
 protected:
 
@@ -22,22 +27,27 @@ protected:
 	int32 AmmoTotal; // ammo excluding ammo in magazine 
 	int32 AmmoInMagazine;
 	int32 DamageAmount;
-	//flost RecoilValue;
+	//float RecoilValue;
 	float FireRate; // shots in second
 	float ReloadTime; // seconds
 	float LastShotTime;
 	bool bIsReloading;
 	bool bFirstShotFired;
 	EWeapon WeaponType;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AProjectile> ProjectileType;
 
 	FTimerHandle FireTimer;
 
 	virtual void Fire();
+	virtual void ShotProjectile();
+	void DecreaseAmmoAmount();
 
 public:
 
 	AWeapon();
 
+	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; };
 	void AddAmmo();
 	virtual void StartFire();
 	virtual void StopFire();

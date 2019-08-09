@@ -13,12 +13,12 @@ UCLASS()
 class FPS_API AShotgun : public AWeapon
 {
 	GENERATED_BODY()
+
+	int32 AmountOfPelletsInShell;
 	
 public:
 	
 	AShotgun();
-
-	virtual void StartFire() override;
-	virtual void Fire() override;
+	virtual void ShotProjectile() override;
 	
 };
