@@ -6,6 +6,7 @@
 #include "FPSCharacter.h"
 #include "Projectile.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 AWeapon::AWeapon()
 {
@@ -13,6 +14,11 @@ AWeapon::AWeapon()
 	RootComponent = Mesh;
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MuzzleFlashEffect"));
+	MuzzleFlashEffect->SetupAttachment(GetMesh(), TEXT("Muzzle"));
+	MuzzleFlashEffect->SetAutoActivate(false);
+	ShotSoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("ShotSoundEffect"));
+	ShotSoundEffect->SetupAttachment(GetMesh(), TEXT("Muzzle"));
+	ShotSoundEffect->SetAutoActivate(false);
 
 	bIsReloading = false;
 	bFirstShotFired = false;
@@ -49,6 +55,10 @@ void AWeapon::Fire()
 {
 	LastShotTime = GetWorld()->TimeSeconds;
 	ShotProjectile();
+	if (MuzzleFlashEffect)
+		MuzzleFlashEffect->ActivateSystem();
+	if (ShotSoundEffect)
+		ShotSoundEffect->Activate(true);
 	DecreaseAmmoAmount();
 	UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
 }
@@ -57,7 +67,8 @@ void AWeapon::ShotProjectile()
 {
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetMesh()->GetSocketTransform(TEXT("ProjectileSpawnPoint")), SpawnParams);
+	SpawnParams.Owner = this;
+	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
 }
 
 void AWeapon::DecreaseAmmoAmount()

@@ -9,6 +9,7 @@
 
 class AProjectile;
 class UParticleSystemComponent;
+class UAudioComponent;
 
 UCLASS()
 class FPS_API AWeapon : public APickup
@@ -19,6 +20,8 @@ class FPS_API AWeapon : public APickup
 	USkeletalMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* MuzzleFlashEffect;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* ShotSoundEffect;
 
 protected:
 

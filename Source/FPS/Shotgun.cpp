@@ -25,8 +25,8 @@ void AShotgun::ShotProjectile()
 	while (i > 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%i"), i);
-		FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetMesh()->GetSocketLocation(TEXT("ProjectileSpawnPoint")), FVector(2.f));
-		FVector SpawnDirection = GetMesh()->GetSocketRotation(TEXT("ProjectileSpawnPoint")).Vector();//(GetMesh()->GetSocketLocation(TEXT("ProjectileSpawnPoint")) + GetMesh()->GetForwardVector());
+		FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(2.f));
+		FVector SpawnDirection = GetMesh()->GetSocketRotation(TEXT("ProjectileSpawnPoint")).Vector();
 		SpawnDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(SpawnDirection.GetSafeNormal(), 15.f);
 		FRotator SpawnRotation = SpawnDirection.GetSafeNormal().ToOrientationRotator();
 		FActorSpawnParameters SpawnParams;

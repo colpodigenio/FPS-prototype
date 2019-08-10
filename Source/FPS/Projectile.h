@@ -21,9 +21,13 @@ class FPS_API AProjectile : public AActor
 
 	int32 DamageDone;
 
+	void SetShotDirection();
+
 public:	
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	UFUNCTION()
 	void HitTarget(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 

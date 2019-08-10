@@ -28,6 +28,7 @@ APickupRespawnPoint::APickupRespawnPoint()
 
 	PickupVisualEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PickupVisualEffect"));
 	PickupVisualEffect->SetupAttachment(RootComponent);
+	PickupVisualEffect->SetAutoActivate(false);
 
 	PickupSoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("PickupSoundEffect"));
 	PickupSoundEffect->SetupAttachment(RootComponent);
@@ -90,6 +91,11 @@ void APickupRespawnPoint::DeactivatePickup()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Deactivate"))
 	PickupComponent->Deactivate();
+	PickupComponent->SetVisibility(false);
+	if (PickupVisualEffect)
+		PickupVisualEffect->ActivateSystem(true);
+	if (PickupSoundEffect)
+		PickupSoundEffect->Activate(true);
 }
 
 void APickupRespawnPoint::ApplyPickupToCharacter()
@@ -108,4 +114,5 @@ void APickupRespawnPoint::ActivatePickup()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Activate"))
 	PickupComponent->Activate();
+	PickupComponent->SetVisibility(true);
 }

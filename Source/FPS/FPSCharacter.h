@@ -21,10 +21,8 @@ class FPS_API AFPSCharacter : public ACharacter
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
-
 	UPROPERTY(EditDefaultsOnly, meta =(AllowPrivateAccess = "true"))
-	FName InventorySocketName;
-	
+	FName InventorySocketName;	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AWeapon* CurrentWeapon;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -42,20 +40,6 @@ class FPS_API AFPSCharacter : public ACharacter
 	float LastMovementMultiplier;
 
 	FVector LastLocation; // TO DELETE temporary variable to determine movement speed for debug
-
-public:
-	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
-	virtual void Tick(float DeltaTime) override;
-	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void ReceiveDamage(int32 DamageAmount);
-	bool CheckIfCharacterHasWeapon(EWeapon WeaponType);
-	void AddAmmoFromWeaponPickup(EWeapon WeaponType);
-	UFUNCTION(BlueprintImplementableEvent)
-	AWeapon* SpawnWeaponFromPickup(EWeapon WeaponType);
-	void AddWeaponFromWeaponPickup(EWeapon WeaponType);
-
-private:
 
 	void Move(float AxisValue);
 	void Strafe(float AxisValue);
@@ -76,6 +60,19 @@ private:
 	void TakeAssaultRifle();
 	void TakeShotgun();
 	void TakeRocketLauncher();
+
+public:
+	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
+	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void ReceiveDamage(int32 DamageAmount);
+	bool CheckIfCharacterHasWeapon(EWeapon WeaponType);
+	void AddAmmoFromWeaponPickup(EWeapon WeaponType);
+	UFUNCTION(BlueprintImplementableEvent)
+	AWeapon* SpawnWeaponFromPickup(EWeapon WeaponType);
+	void AddWeaponFromWeaponPickup(EWeapon WeaponType);
+	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
 
 protected:
 
