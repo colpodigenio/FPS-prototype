@@ -18,7 +18,7 @@ class FPS_API AShotgun : public AWeapon
 	
 public:
 	
-	AShotgun();
+	AShotgun(const FObjectInitializer& ObjectInitializer);
 	virtual void ShotProjectile() override;
 	
 };

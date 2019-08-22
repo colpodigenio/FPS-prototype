@@ -21,7 +21,7 @@ class FPS_API AProjectile : public AActor
 
 	int32 DamageDone;
 
-	void SetShotDirection();
+	void SetProjectileInitialVelocity();
 
 public:	
 	AProjectile();
@@ -33,4 +33,5 @@ public:
 
 protected:
 	virtual void BeginPlay() override;	
+	virtual FVector FindShotDirection();
 };

@@ -3,7 +3,7 @@
 #include "HealthComponent.h"
 
 UHealthComponent::UHealthComponent()
-	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(200), Armor(25), bIsDead(false), bIsRegenerating(false) {}
+	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(200), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
 
 void UHealthComponent::ApplyHeal(int32 HealDelta)
 {
@@ -52,17 +52,17 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta)
 		Die();
 }
 
-void UHealthComponent::StartRegenerateHealthTimer()
+void UHealthComponent::StartRegenerateHealthTimer(int32 NewRegenerationDuration)
 {
-	RegenerationDuration = 5;
+	RegenerationDuration = NewRegenerationDuration;
 	bIsRegenerating = true;
 	if (GetOwner())
-		GetOwner()->GetWorldTimerManager().SetTimer(RegenerateHealthTimer, this, &UHealthComponent::RegenerateHealth, 1.0f, true);
+		GetOwner()->GetWorldTimerManager().SetTimer(RegenerateHealthTimer, this, &UHealthComponent::RegenerateHealth, 1 / RegenerationRate, true);
 }
 
 void UHealthComponent::RegenerateHealth()
 {
-	Health++;
+	Health += HealthRegenerationDelta;
 	RegenerationDuration--;
 	if (RegenerationDuration <= 0)
 	{

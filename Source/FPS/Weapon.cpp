@@ -7,27 +7,30 @@
 #include "Projectile.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Camera/CameraComponent.h"
 
-AWeapon::AWeapon()
+AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AWeapon::MeshComponentName))
 {
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+	RootComponent = WeaponMesh;
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MuzzleFlashEffect"));
-	MuzzleFlashEffect->SetupAttachment(GetMesh(), TEXT("Muzzle"));
+	MuzzleFlashEffect->SetupAttachment(GetWeaponMesh(), TEXT("Muzzle"));
 	MuzzleFlashEffect->SetAutoActivate(false);
 	ShotSoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("ShotSoundEffect"));
-	ShotSoundEffect->SetupAttachment(GetMesh(), TEXT("Muzzle"));
+	ShotSoundEffect->SetupAttachment(GetWeaponMesh(), TEXT("Muzzle"));
 	ShotSoundEffect->SetAutoActivate(false);
 
 	bIsReloading = false;
 	bFirstShotFired = false;
-	WeaponType = EWeapon::None;
+	WeaponType = EWeaponType::None;
 }
 
-void AWeapon::AddAmmo()
+void AWeapon::AddAmmo(int32 AmountOfMagazines)
 {
-	int32 NewAmmoTotal = AmmoTotal + 2 * AmmoMagazineCapacity;
+	int32 NewAmmoTotal = AmmoTotal + AmountOfMagazines * AmmoMagazineCapacity;
 	if (NewAmmoTotal > AmmoTotalCapacity)
 		AmmoTotal = AmmoTotalCapacity;
 	else
@@ -51,10 +54,18 @@ void AWeapon::StartFire()
 	GetWorldTimerManager().SetTimer(FireTimer, this, &AWeapon::Fire, 1 / FireRate, true, ShotDelay);
 }
 
+void AWeapon::AddRecoil()
+{
+	AFPSCharacter* Player = Cast<AFPSCharacter>(GetOwner());
+	Player->AddControllerPitchInput(RecoilValue);
+	UE_LOG(LogTemp, Warning, TEXT("Recoil Value = %f"), RecoilValue)
+}
+
 void AWeapon::Fire()
 {
 	LastShotTime = GetWorld()->TimeSeconds;
 	ShotProjectile();
+	AddRecoil();
 	if (MuzzleFlashEffect)
 		MuzzleFlashEffect->ActivateSystem();
 	if (ShotSoundEffect)
@@ -68,7 +79,7 @@ void AWeapon::ShotProjectile()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;
-	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
+	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetWeaponMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
 }
 
 void AWeapon::DecreaseAmmoAmount()
@@ -115,11 +126,21 @@ void AWeapon::Reload()
 	bIsReloading = false;
 }
 
-void AWeapon::AddThisToCharacterInventory(AFPSCharacter* Character)
+void AWeapon::ApplyToCharacter(AFPSCharacter* Character)
 {
-	Super::AddThisToCharacterInventory(Character);
+	Super::ApplyToCharacter(Character);
 	if (Character->CheckIfCharacterHasWeapon(WeaponType))
 		Character->AddAmmoFromWeaponPickup(WeaponType);
 	else
 		Character->AddWeaponFromWeaponPickup(WeaponType);
+}
+
+void AWeapon::ShowWeapon()
+{
+	GetWeaponMesh()->SetVisibility(true);
+}
+
+void AWeapon::HideWeapon()
+{
+	GetWeaponMesh()->SetVisibility(false);
 }

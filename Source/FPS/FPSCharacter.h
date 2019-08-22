@@ -26,7 +26,7 @@ class FPS_API AFPSCharacter : public ACharacter
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AWeapon* CurrentWeapon;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TMap<EWeapon, AWeapon*> WeaponInventory;
+	TMap<EWeaponType, AWeapon*> WeaponInventory;
 
 	float Stamina;	// time in seconds which character can sprint
 	float StaminaMax; 
@@ -57,6 +57,7 @@ class FPS_API AFPSCharacter : public ACharacter
 	void Zoom();
 	void ReloadWeapon();
 	void UseExplosive();
+	void TakeNewWeapon(EWeaponType NewWeaponType);
 	void TakeAssaultRifle();
 	void TakeShotgun();
 	void TakeRocketLauncher();
@@ -67,12 +68,15 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ReceiveDamage(int32 DamageAmount);
-	bool CheckIfCharacterHasWeapon(EWeapon WeaponType);
-	void AddAmmoFromWeaponPickup(EWeapon WeaponType);
+	bool CheckIfCharacterHasWeapon(EWeaponType WeaponType);
+	void AddAmmoFromWeaponPickup(EWeaponType WeaponType);
 	UFUNCTION(BlueprintImplementableEvent)
-	AWeapon* SpawnWeaponFromPickup(EWeapon WeaponType);
-	void AddWeaponFromWeaponPickup(EWeapon WeaponType);
+	AWeapon* SpawnWeaponFromPickup(EWeaponType WeaponType);
+	void AddWeaponFromWeaponPickup(EWeaponType WeaponType);
 	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
+	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	AWeapon* GetWeaponByType(EWeaponType WeaponType);
+	bool bHasPowerup;
 
 protected:
 

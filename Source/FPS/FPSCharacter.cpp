@@ -20,8 +20,8 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
-	FPSCamera->SetupAttachment(GetMesh());
-	//GetMesh()->SetupAttachment(FPSCamera);
+	FPSCamera->SetupAttachment(RootComponent);
+	GetMesh()->SetupAttachment(FPSCamera);
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	JumpMaxCount = 2;
@@ -37,12 +37,13 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	bIsMoving = false;
 	bIsStrafing = false;
 	bIsRunning = true;
+	bHasPowerup = false;
 
 	InventorySocketName = TEXT("InventorySocket");
 
-	WeaponInventory.Emplace(EWeapon::AssaultRifle, nullptr);
-	WeaponInventory.Emplace(EWeapon::Shotgun, nullptr);
-	WeaponInventory.Emplace(EWeapon::RocketLauncher, nullptr);
+	WeaponInventory.Emplace(EWeaponType::AssaultRifle, nullptr);
+	WeaponInventory.Emplace(EWeaponType::Shotgun, nullptr);
+	WeaponInventory.Emplace(EWeaponType::RocketLauncher, nullptr);
 }
 
 void AFPSCharacter::BeginPlay()
@@ -225,39 +226,47 @@ void AFPSCharacter::UseExplosive()
 	UE_LOG(LogTemp, Warning, TEXT("UseExplosive"))
 }
 
+void AFPSCharacter::TakeNewWeapon(EWeaponType NewWeaponType)
+{
+	CurrentWeapon->HideWeapon();
+	CurrentWeapon = WeaponInventory.FindRef(NewWeaponType);
+	CurrentWeapon->ShowWeapon();
+}
+
 void AFPSCharacter::TakeAssaultRifle()
 {
-	if (WeaponInventory.FindRef(EWeapon::AssaultRifle))
+	if (WeaponInventory.FindRef(EWeaponType::AssaultRifle))
 	{
-		CurrentWeapon = WeaponInventory.FindRef(EWeapon::AssaultRifle);
+		TakeNewWeapon(EWeaponType::AssaultRifle);
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
 	}
 }
 
 void AFPSCharacter::TakeShotgun()
 {
-	if (WeaponInventory.FindRef(EWeapon::Shotgun))
+	if (WeaponInventory.FindRef(EWeaponType::Shotgun))
 	{
-		CurrentWeapon = WeaponInventory.FindRef(EWeapon::Shotgun);
+		TakeNewWeapon(EWeaponType::Shotgun);
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
 	}
 }
 
 void AFPSCharacter::TakeRocketLauncher()
 {
-	if (WeaponInventory.FindRef(EWeapon::RocketLauncher))
+	if (WeaponInventory.FindRef(EWeaponType::RocketLauncher))
 	{
-		CurrentWeapon = WeaponInventory.FindRef(EWeapon::RocketLauncher);
+		TakeNewWeapon(EWeaponType::RocketLauncher);
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
 	}
 }
+
 
 void AFPSCharacter::ReceiveDamage(int32 DamageAmount)
 {
 	HealthComponent->ApplyDamage(DamageAmount);
 }
 
-bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeapon WeaponType)
+bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeaponType WeaponType)
 {
 	UE_LOG(LogTemp, Warning, TEXT("CheckIfCharacterHasWeapon"))
 	if (WeaponInventory.FindRef(WeaponType))
@@ -266,15 +275,21 @@ bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeapon WeaponType)
 		return false;
 }
 
-void AFPSCharacter::AddAmmoFromWeaponPickup(EWeapon WeaponType)
+void AFPSCharacter::AddAmmoFromWeaponPickup(EWeaponType WeaponType)
 {
-	WeaponInventory.FindRef(WeaponType)->AddAmmo();
+	int32 AmountOfMagazinesToAdd = 2;
+	WeaponInventory.FindRef(WeaponType)->AddAmmo(AmountOfMagazinesToAdd);
 	UE_LOG(LogTemp, Warning, TEXT("AddAmmoFromWeaponPickup"))
 }
 
-void AFPSCharacter::AddWeaponFromWeaponPickup(EWeapon WeaponType)
+void AFPSCharacter::AddWeaponFromWeaponPickup(EWeaponType WeaponType)
 {
 	UE_LOG(LogTemp, Warning, TEXT("AddWeaponFromWeaponPickup"))
 	WeaponInventory.Emplace(WeaponType, SpawnWeaponFromPickup(WeaponType));
+}
+
+AWeapon* AFPSCharacter::GetWeaponByType(EWeaponType WeaponType)
+{
+	return WeaponInventory.FindRef(WeaponType);
 }
 

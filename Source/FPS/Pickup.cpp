@@ -2,11 +2,19 @@
 
 #include "Pickup.h"
 #include "FPSCharacter.h"
+#include "Components/StaticMeshComponent.h"
 
-APickup::APickup()
+
+FName APickup::MeshComponentName(TEXT("Mesh"));
+
+APickup::APickup(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(MeshComponentName);
+	RootComponent = Mesh;
+	if(Mesh)
+		Mesh->SetCollisionResponseToAllChannels(ECR_Overlap);
 }
 
 void APickup::BeginPlay()
@@ -21,7 +29,7 @@ void APickup::Tick(float DeltaTime)
 
 }
 
-void APickup::AddThisToCharacterInventory(AFPSCharacter* Character)
+void APickup::ApplyToCharacter(AFPSCharacter* Character)
 {
 	if (!Character) return;
 }

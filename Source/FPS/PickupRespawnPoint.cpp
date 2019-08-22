@@ -101,7 +101,7 @@ void APickupRespawnPoint::DeactivatePickup()
 void APickupRespawnPoint::ApplyPickupToCharacter()
 {
 	APickup* PickupInstance = Cast<APickup>(PickupComponent->GetChildActor());
-	PickupInstance->AddThisToCharacterInventory(OccupyingCharacter);
+	PickupInstance->ApplyToCharacter(OccupyingCharacter);
 }
 
 void APickupRespawnPoint::StartPickupActivationTimer()

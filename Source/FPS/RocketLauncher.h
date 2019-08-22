@@ -16,9 +16,6 @@ class FPS_API ARocketLauncher : public AWeapon
 	
 public:
 
-	ARocketLauncher();
-
-	virtual void StartFire() override;
-	virtual void Fire() override;
+	ARocketLauncher(const FObjectInitializer& ObjectInitializer);
 	
 };

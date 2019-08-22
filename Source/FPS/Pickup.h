@@ -7,19 +7,23 @@
 #include "Pickup.generated.h"
 
 class AFPSCharacter;
+class UStaticMeshComponent;
 
 UCLASS()
 class FPS_API APickup : public AActor
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Mesh;
+
 public:	
-	APickup();
+	APickup(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void Tick(float DeltaTime) override;	
-	virtual void AddThisToCharacterInventory(AFPSCharacter* Character);
+	virtual void ApplyToCharacter(AFPSCharacter* Character);
 
 
 protected:
 	virtual void BeginPlay() override;	
-	
+	static FName MeshComponentName;
 };

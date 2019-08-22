@@ -5,9 +5,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Projectile.h"
 
-AShotgun::AShotgun()
+AShotgun::AShotgun(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	WeaponType = EWeapon::Shotgun;
+	WeaponType = EWeaponType::Shotgun;
 	AmmoTotalCapacity = 48;
 	AmmoMagazineCapacity = 6;
 	AmmoTotal = 12;
@@ -16,6 +17,8 @@ AShotgun::AShotgun()
 	FireRate = 4.0f;
 	ReloadTime = 2.5f;
 	AmountOfPelletsInShell = 12;
+	RecoilValue = -4.0f;
+	DefaultRecoilValue = -4.0f;
 }
 
 void AShotgun::ShotProjectile()
@@ -24,14 +27,15 @@ void AShotgun::ShotProjectile()
 	
 	while (i > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%i"), i);
-		FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(2.f));
-		FVector SpawnDirection = GetMesh()->GetSocketRotation(TEXT("ProjectileSpawnPoint")).Vector();
-		SpawnDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(SpawnDirection.GetSafeNormal(), 15.f);
-		FRotator SpawnRotation = SpawnDirection.GetSafeNormal().ToOrientationRotator();
+		FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(2.f));
+		FVector SpawnDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(GetWeaponMesh()->GetForwardVector(), 10.f);
+		FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, SpawnLocation + SpawnDirection);
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Owner = this;
 		GetWorld()->SpawnActor<AProjectile>(ProjectileType, SpawnLocation, SpawnRotation, SpawnParams);
+		UE_LOG(LogTemp, Warning, TEXT("%i, %f, %f, %f"), i, SpawnRotation.Roll, SpawnRotation.Pitch, SpawnRotation.Yaw);
+		//UE_LOG(LogTemp, Warning, TEXT("%i, %f, %f, %f ::: %f, %f, %f"), i, SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z, GetMesh()->GetSocketLocation(TEXT("Muzzle")).X, GetMesh()->GetSocketLocation(TEXT("Muzzle")).Y, GetMesh()->GetSocketLocation(TEXT("Muzzle")).Z);
 		i--;
 	}
 }

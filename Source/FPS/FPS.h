@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class EWeapon : uint8
+enum class EWeaponType : uint8
 {
 	None,
 	AssaultRifle,

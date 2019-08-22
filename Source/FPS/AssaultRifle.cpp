@@ -4,9 +4,10 @@
 #include "FPS.h"
 #include "Projectile.h"
 
-AAssaultRifle::AAssaultRifle()
+AAssaultRifle::AAssaultRifle(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	WeaponType = EWeapon::AssaultRifle;
+	WeaponType = EWeaponType::AssaultRifle;
 	AmmoTotalCapacity = 180;
 	AmmoMagazineCapacity = 30;
 	AmmoTotal = 30;
@@ -14,5 +15,7 @@ AAssaultRifle::AAssaultRifle()
 	DamageAmount = 20;
 	FireRate = 13.0f; // should be 13 shots/sec for m4 rifle
 	ReloadTime = 3.0f;
+	RecoilValue = -1.0f;
+	DefaultRecoilValue = -1.0f;
 }
 

@@ -13,5 +13,5 @@ class FPS_API AAssaultRifle : public AWeapon
 	
 public:
 
-	AAssaultRifle();
+	AAssaultRifle(const FObjectInitializer& ObjectInitializer);
 };

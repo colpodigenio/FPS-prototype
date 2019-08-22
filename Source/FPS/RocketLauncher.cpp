@@ -3,9 +3,10 @@
 #include "RocketLauncher.h"
 #include "FPS.h"
 
-ARocketLauncher::ARocketLauncher()
+ARocketLauncher::ARocketLauncher(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	WeaponType = EWeapon::RocketLauncher;
+	WeaponType = EWeaponType::RocketLauncher;
 	AmmoTotalCapacity = 10;
 	AmmoMagazineCapacity = 1;
 	AmmoTotal = 2;
@@ -13,14 +14,6 @@ ARocketLauncher::ARocketLauncher()
 	DamageAmount = 100;
 	FireRate = 0.1f; 
 	ReloadTime = 1.5f;
-}
-
-void ARocketLauncher::StartFire()
-{
-
-}
-
-void ARocketLauncher::Fire()
-{
-
+	RecoilValue = -10.0f;
+	DefaultRecoilValue = -10.0f;
 }

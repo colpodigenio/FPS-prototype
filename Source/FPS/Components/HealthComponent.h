@@ -19,7 +19,12 @@ class FPS_API UHealthComponent : public UActorComponent
 	int32 Armor;
 	bool bIsDead;
 	bool bIsRegenerating;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 RegenerationDuration; // in seconds
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	int32 HealthRegenerationDelta;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	float RegenerationRate;
 
 	FTimerHandle RegenerateHealthTimer;
 	FTimerHandle RevertHealthToMaxTimer;
@@ -48,5 +53,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
 	void ApplyDamage(int32 DamageDelta);
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void StartRegenerateHealthTimer(); // this function is called by regeneration power up
+	void StartRegenerateHealthTimer(int32 NewRegenerationDuration); // this function is called by regeneration power up
+
 };

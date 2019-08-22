@@ -17,11 +17,16 @@ class FPS_API AWeapon : public APickup
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* Mesh;
+	USkeletalMeshComponent* WeaponMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* MuzzleFlashEffect;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UAudioComponent* ShotSoundEffect;
+
+	void AddRecoil();
+	virtual void Fire();
+	void DecreaseAmmoAmount();
+	void Reload();
 
 protected:
 
@@ -34,28 +39,29 @@ protected:
 	float FireRate; // shots in second
 	float ReloadTime; // seconds
 	float LastShotTime;
+	float RecoilValue;
+	float DefaultRecoilValue;
 	bool bIsReloading;
 	bool bFirstShotFired;
-	EWeapon WeaponType;
+	EWeaponType WeaponType;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileType;
 
 	FTimerHandle FireTimer;
 
-	virtual void Fire();
 	virtual void ShotProjectile();
-	void DecreaseAmmoAmount();
 
 public:
 
-	AWeapon();
+	AWeapon(const FObjectInitializer& ObjectInitializer);
 
-	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; };
-	void AddAmmo();
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
+	void AddAmmo(int32 AmountOfMagazines);
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void Aim();
 	virtual void StartReload();
-	virtual void Reload();
-	virtual void AddThisToCharacterInventory(AFPSCharacter* Character) override;
+	virtual void ApplyToCharacter(AFPSCharacter* Character) override;
+	void ShowWeapon();
+	void HideWeapon();
 };
