@@ -4,12 +4,16 @@
 #include "FPSCharacter.h"
 #include "Weapon.h"
 
-void AAmmoPickup::ApplyToCharacter(AFPSCharacter* Character)
+bool AAmmoPickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	Super::ApplyToCharacter(Character);
-
-	AWeapon* WeaponToAddAmmoTo = Character->GetWeaponByType(AmmoType);
-	if (!WeaponToAddAmmoTo)
-		return;
-	WeaponToAddAmmoTo->AddAmmo(AmountOfMagazinesToAdd);
+	if (!Character) return false;
+	checkf(WeaponType != EWeaponType::None, TEXT("Weapon type in ammo class is not set"))
+	AWeapon* WeaponToAddAmmoTo = Character->GetWeaponByType(WeaponType);
+	if (WeaponToAddAmmoTo->CheckIfAmmoIsFull())
+		return false;
+	else
+	{
+		WeaponToAddAmmoTo->AddAmmo(AmountOfMagazinesToAdd);
+		return true;
+	}
 }

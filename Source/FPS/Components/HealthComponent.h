@@ -20,9 +20,8 @@ class FPS_API UHealthComponent : public UActorComponent
 	bool bIsDead;
 	bool bIsRegenerating;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 RegenerationDuration; // in seconds
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 HealthRegenerationDelta;
+	int32 RegenerationDuration;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float RegenerationRate;
 
@@ -32,6 +31,7 @@ class FPS_API UHealthComponent : public UActorComponent
 	void RegenerateHealth(); 
 	void StartRevertHealthToMaxTimer();
 	void RevertHealthToMax();
+	void StopRevertHealthToMaxTimer();
 	void Die();
 
 public:	
@@ -40,7 +40,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE int32 GetHealth() const { return Health; };
 	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetHealthMax() const { return HealthMax; };
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE int32 GetArmor() const { return Armor; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetArmorMax() const { return ArmorMax; };
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsDead() const { return bIsDead; };
 	UFUNCTION(BlueprintPure)

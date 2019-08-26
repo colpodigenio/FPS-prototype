@@ -52,9 +52,12 @@ void APickupRespawnPoint::Tick(float DeltaTime)
 
 	if (bIsPickupPointOccupied && PickupComponent->IsActive())
 	{
-		ApplyPickupToCharacter();
-		DeactivatePickup();
-		StartPickupActivationTimer();
+		APickup* PickupInstance = Cast<APickup>(PickupComponent->GetChildActor());
+		if (PickupInstance->TryApplyToCharacter(OccupyingCharacter))
+		{
+			DeactivatePickup();
+			StartPickupActivationTimer();
+		}
 	}
 }
 
@@ -96,12 +99,6 @@ void APickupRespawnPoint::DeactivatePickup()
 		PickupVisualEffect->ActivateSystem(true);
 	if (PickupSoundEffect)
 		PickupSoundEffect->Activate(true);
-}
-
-void APickupRespawnPoint::ApplyPickupToCharacter()
-{
-	APickup* PickupInstance = Cast<APickup>(PickupComponent->GetChildActor());
-	PickupInstance->ApplyToCharacter(OccupyingCharacter);
 }
 
 void APickupRespawnPoint::StartPickupActivationTimer()

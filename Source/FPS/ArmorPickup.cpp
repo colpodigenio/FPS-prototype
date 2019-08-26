@@ -9,9 +9,14 @@ AArmorPickup::AArmorPickup(const FObjectInitializer& ObjectInitializer)
 	ArmorAmount = 25.0f;
 }
 
-void AArmorPickup::ApplyToCharacter(AFPSCharacter* Character)
+bool AArmorPickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	Super::ApplyToCharacter(Character);
-
-	Character->GetHealthComponent()->AddArmor(ArmorAmount);
+	if (!Character) return false;
+	if (Character->CheckiIfArmorIsFull())
+		return false;
+	else
+	{
+		Character->GetHealthComponent()->AddArmor(ArmorAmount);
+		return true;
+	}
 }

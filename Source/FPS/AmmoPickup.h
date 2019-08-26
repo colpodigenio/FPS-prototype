@@ -19,8 +19,8 @@ class FPS_API AAmmoPickup : public APickup
 
 public:
 	
-	virtual void ApplyToCharacter(AFPSCharacter* Character) override;
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	EWeaponType AmmoType;
+	EWeaponType WeaponType;
 };

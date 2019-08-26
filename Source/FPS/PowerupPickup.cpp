@@ -2,37 +2,29 @@
 
 #include "PowerupPickup.h"
 #include "FPSCharacter.h"
+#include "FPS.h"
+#include "Components/PowerupComponent.h"
 
-void APowerupPickup::ApplyToCharacter(AFPSCharacter* Character)
+APowerupPickup::APowerupPickup()
 {
-	Super::ApplyToCharacter(Character);
+	PrimaryActorTick.bCanEverTick = false;
+}
 
-	CharacterToApply = Character;
+bool APowerupPickup::TryApplyToCharacter(AFPSCharacter* Character)
+{
 
-	if (!CharacterToApply->bHasPowerup)
+	if (Character->GetPowerupComponent()->IsPowerupEnabled())
 	{
-		StartPowerupEffect();
+		return false;
+	}
+	else
+	{
+		ApplyPowerup(Character, PowerupType);
+		return true;
 	}
 }
 
-void APowerupPickup::EnablePowerup()
+void APowerupPickup::ApplyPowerup(AFPSCharacter* Character, EPowerupType PowerupType)
 {
-	CharacterToApply->bHasPowerup = true;
-}
-
-void APowerupPickup::DisablePowerup()
-{
-	CharacterToApply->bHasPowerup = false;
-}
-
-void APowerupPickup::StartPowerupEffect()
-{
-	EnablePowerup();
-	FTimerHandle PowerupTimer;
-	GetWorldTimerManager().SetTimer(PowerupTimer, this, &APowerupPickup::EndPowerupEffect, PowerupDuration, false);
-}
-
-void APowerupPickup::EndPowerupEffect()
-{
-	DisablePowerup();
+	Character->GetPowerupComponent()->EnablePowerup(PowerupType);
 }

@@ -26,11 +26,10 @@ void APickup::BeginPlay()
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void APickup::ApplyToCharacter(AFPSCharacter* Character)
+bool APickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	if (!Character) return;
+	return true;
 }
 

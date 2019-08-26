@@ -19,8 +19,6 @@ class FPS_API AProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
 
-	int32 DamageDone;
-
 	void SetProjectileInitialVelocity();
 
 public:	
@@ -28,10 +26,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	UFUNCTION()
-	void HitTarget(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 DamageDone;
+
 	virtual void BeginPlay() override;	
 	virtual FVector FindShotDirection();
+	UFUNCTION()
+	virtual void HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

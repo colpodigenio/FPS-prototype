@@ -20,7 +20,7 @@ class FPS_API APickup : public AActor
 public:	
 	APickup(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void Tick(float DeltaTime) override;	
-	virtual void ApplyToCharacter(AFPSCharacter* Character);
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character);
 
 
 protected:

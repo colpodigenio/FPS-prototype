@@ -12,6 +12,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Shotgun.h"
 #include "RocketLauncher.h"
+#include "Components/PowerupComponent.h"
 
 AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -19,10 +20,11 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = true;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	PowerupComponent = CreateDefaultSubobject<UPowerupComponent>(TEXT("PowerupComponent"));
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
 	FPSCamera->SetupAttachment(RootComponent);
 	GetMesh()->SetupAttachment(FPSCamera);
-
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	JumpMaxCount = 2;
 
@@ -30,14 +32,13 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 100.f;
 	StaminaMax = 5.0f;
 	Stamina = StaminaMax;
-	MovementMultiplier = 0.55f;
+	MovementMultiplier = RunningMultiplier;
 	LastMovementMultiplier = MovementMultiplier;
 
 	bIsSprinting = false;
 	bIsMoving = false;
 	bIsStrafing = false;
 	bIsRunning = true;
-	bHasPowerup = false;
 
 	InventorySocketName = TEXT("InventorySocket");
 
@@ -260,6 +261,41 @@ void AFPSCharacter::TakeRocketLauncher()
 	}
 }
 
+bool AFPSCharacter::CheckIfHealthIsFull()
+{
+	if (HealthComponent->GetHealth() >= HealthComponent->GetHealthMax())
+		return true;
+	else
+		return false;
+}
+
+bool AFPSCharacter::CheckiIfArmorIsFull()
+{
+	if (HealthComponent->GetArmor() >= HealthComponent->GetArmorMax())
+		return true;
+	else
+		return false;
+}
+
+void AFPSCharacter::EnableDamageBoost()
+{
+	for (auto& Elem : WeaponInventory)
+	{
+		AWeapon* WeaponRef = Cast<AWeapon>(Elem.Value);
+		if (WeaponRef)
+			WeaponRef->ChangeDamage(WeaponRef->GetDamageBooster());
+	}
+}
+
+void AFPSCharacter::DisableDamageBoost()
+{
+	for (auto& Elem : WeaponInventory)
+	{
+		AWeapon* WeaponRef = Cast<AWeapon>(Elem.Value);
+		if (WeaponRef)
+			WeaponRef->ChangeDamage(1);
+	}
+}
 
 void AFPSCharacter::ReceiveDamage(int32 DamageAmount)
 {

@@ -34,8 +34,6 @@ void AShotgun::ShotProjectile()
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParams.Owner = this;
 		GetWorld()->SpawnActor<AProjectile>(ProjectileType, SpawnLocation, SpawnRotation, SpawnParams);
-		UE_LOG(LogTemp, Warning, TEXT("%i, %f, %f, %f"), i, SpawnRotation.Roll, SpawnRotation.Pitch, SpawnRotation.Yaw);
-		//UE_LOG(LogTemp, Warning, TEXT("%i, %f, %f, %f ::: %f, %f, %f"), i, SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z, GetMesh()->GetSocketLocation(TEXT("Muzzle")).X, GetMesh()->GetSocketLocation(TEXT("Muzzle")).Y, GetMesh()->GetSocketLocation(TEXT("Muzzle")).Z);
 		i--;
 	}
 }

@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 
+#define Head EPhysicalSurface::SurfaceType1
+#define Body EPhysicalSurface::SurfaceType2
+
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
@@ -11,4 +14,13 @@ enum class EWeaponType : uint8
 	AssaultRifle,
 	Shotgun,
 	RocketLauncher
+};
+
+UENUM(BlueprintType)
+enum class EPowerupType : uint8
+{
+	None,
+	SpeedBoost,
+	DamageBoost,
+	HealthRegeneration
 };

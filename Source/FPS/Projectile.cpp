@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 // Maybe it is good to use AbstractFactory to implement projectiles?
 
@@ -16,6 +17,7 @@ AProjectile::AProjectile()
 
 	Mesh = CreateAbstractDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
+	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 	ProjectileMovement = CreateAbstractDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	DamageDone = 20.0f;
 
@@ -26,7 +28,7 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();	
-	OnActorHit.AddDynamic(this, &AProjectile::HitTarget);
+	Mesh->OnComponentHit.AddDynamic(this, &AProjectile::HitTarget);
 }
 
 void AProjectile::Tick(float DeltaTime)
@@ -68,18 +70,18 @@ FVector AProjectile::FindShotDirection()
 
 #include "DrawDebugHelpers.h"
 
-void AProjectile::HitTarget(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
+void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if(OtherActor->GetClass() != this->GetClass())
 		Destroy();
 	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.0f, 16, FColor::Emerald, true);
-	if (Cast<AFPSCharacter>(OtherActor))
+	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
+	if (Enemy)
 	{
-// 		AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
-// 		if(Hit.PhysMaterial->SurfaceType == "Head");
-// 			Enemy->ReceiveDamage(3 * DamageDone);
-// 		else
-// 			Enemy->ReceiveDamage(DamageDone);
+ 		if(Hit.PhysMaterial->SurfaceType == Head)
+ 			Enemy->ReceiveDamage(3 * DamageDone);
+ 		else
+ 			Enemy->ReceiveDamage(DamageDone);
 	}
 }
 

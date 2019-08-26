@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Pickup.h"
+#include "FPS.h"
 #include "PowerupPickup.generated.h"
 
 class AFPSCharacter;
@@ -13,20 +14,12 @@ class FPS_API APowerupPickup : public APickup
 {
 	GENERATED_BODY()
 
-	//Not needed for Regeneration powerup
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float PowerupDuration;
+	EPowerupType PowerupType;
 
-	void StartPowerupEffect();
-	void EndPowerupEffect();
+	void ApplyPowerup(AFPSCharacter* Character, EPowerupType PowerupType);
 
 public:
-	virtual void ApplyToCharacter(AFPSCharacter* Character) override;
-
-protected:
-	
-	TWeakObjectPtr<AFPSCharacter> CharacterToApply;
-	virtual void EnablePowerup();
-	virtual void DisablePowerup();
-	
+	APowerupPickup();
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 };

@@ -9,9 +9,14 @@ AHealthPickup::AHealthPickup(const FObjectInitializer& ObjectInitializer)
 	HealAmount = 25.0f;
 }
 
-void AHealthPickup::ApplyToCharacter(AFPSCharacter* Character)
+bool AHealthPickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	Super::ApplyToCharacter(Character);
-
-	Character->GetHealthComponent()->ApplyHeal(HealAmount);
+	if (!Character) return false;
+	if (Character->CheckIfHealthIsFull())
+		return false;
+	else
+	{
+		Character->GetHealthComponent()->ApplyHeal(HealAmount);
+		return true;
+	}
 }

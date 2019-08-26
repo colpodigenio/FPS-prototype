@@ -20,5 +20,5 @@ public:
 
 	AHealthPickup(const FObjectInitializer& ObjectInitializer);
 
-	virtual void ApplyToCharacter(AFPSCharacter* Character) override;
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 };

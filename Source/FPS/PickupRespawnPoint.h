@@ -39,7 +39,6 @@ class FPS_API APickupRespawnPoint : public AActor
 	void ActivatePickup();
 	void StartPickupActivationTimer();
 	void DeactivatePickup();
-	void ApplyPickupToCharacter();
 
 
 public:	

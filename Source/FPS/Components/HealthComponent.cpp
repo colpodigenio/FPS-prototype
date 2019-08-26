@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HealthComponent.h"
+#include "FPSCharacter.h"
 
 UHealthComponent::UHealthComponent()
 	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(200), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
@@ -64,6 +65,7 @@ void UHealthComponent::RegenerateHealth()
 {
 	Health += HealthRegenerationDelta;
 	RegenerationDuration--;
+	StopRevertHealthToMaxTimer();
 	if (RegenerationDuration <= 0)
 	{
 		GetOwner()->GetWorldTimerManager().ClearTimer(RegenerateHealthTimer);
@@ -85,6 +87,11 @@ void UHealthComponent::RevertHealthToMax()
 		Health--;
 	else
 		GetOwner()->GetWorldTimerManager().ClearTimer(RevertHealthToMaxTimer);
+}
+
+void UHealthComponent::StopRevertHealthToMaxTimer()
+{
+	GetOwner()->GetWorldTimerManager().ClearTimer(RevertHealthToMaxTimer);
 }
 
 void UHealthComponent::Die()

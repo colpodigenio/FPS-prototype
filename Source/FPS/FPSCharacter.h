@@ -11,6 +11,7 @@ class UHealthComponent;
 class UCameraComponent;
 class AWeapon;
 class USkeletalMeshComponent;
+class UPowerupComponent;
 
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
@@ -19,6 +20,8 @@ class FPS_API AFPSCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPowerupComponent* PowerupComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
 	UPROPERTY(EditDefaultsOnly, meta =(AllowPrivateAccess = "true"))
@@ -35,7 +38,6 @@ class FPS_API AFPSCharacter : public ACharacter
 	bool bIsMovingForward;
 	bool bIsStrafing;
 	bool bIsRunning;
-	const float RunningMultiplier = 0.55; // walking is 2 times slower
 	float MovementMultiplier;
 	float LastMovementMultiplier;
 
@@ -63,6 +65,7 @@ class FPS_API AFPSCharacter : public ACharacter
 	void TakeRocketLauncher();
 
 public:
+
 	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -75,8 +78,13 @@ public:
 	void AddWeaponFromWeaponPickup(EWeaponType WeaponType);
 	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	FORCEINLINE UPowerupComponent* GetPowerupComponent() const { return PowerupComponent; };
 	AWeapon* GetWeaponByType(EWeaponType WeaponType);
-	bool bHasPowerup;
+	bool CheckIfHealthIsFull();
+	bool CheckiIfArmorIsFull();
+	void EnableDamageBoost();
+	void DisableDamageBoost();
+	const float RunningMultiplier = 0.55; // walking is 2 times slower
 
 protected:
 

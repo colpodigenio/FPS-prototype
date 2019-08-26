@@ -9,6 +9,8 @@
 #include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/TimelineComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AWeapon::MeshComponentName))
@@ -22,7 +24,9 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	ShotSoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("ShotSoundEffect"));
 	ShotSoundEffect->SetupAttachment(GetWeaponMesh(), TEXT("Muzzle"));
 	ShotSoundEffect->SetAutoActivate(false);
+	WeaponTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("RecoilTimeline"));
 
+	DamageBooster = 3;
 	bIsReloading = false;
 	bFirstShotFired = false;
 	WeaponType = EWeaponType::None;
@@ -54,11 +58,21 @@ void AWeapon::StartFire()
 	GetWorldTimerManager().SetTimer(FireTimer, this, &AWeapon::Fire, 1 / FireRate, true, ShotDelay);
 }
 
-void AWeapon::AddRecoil()
+void AWeapon::RecoilTimelineCallback(float Value)
 {
 	AFPSCharacter* Player = Cast<AFPSCharacter>(GetOwner());
+	RecoilValue = DefaultRecoilValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()) / WeaponTimeline->GetTimelineLength();
 	Player->AddControllerPitchInput(RecoilValue);
-	UE_LOG(LogTemp, Warning, TEXT("Recoil Value = %f"), RecoilValue)
+}
+
+void AWeapon::RecoilTimelineFinish()
+{
+}
+
+void AWeapon::AddRecoil()
+{
+	if (WeaponTimeline)
+		WeaponTimeline->PlayFromStart();
 }
 
 void AWeapon::Fire()
@@ -76,10 +90,29 @@ void AWeapon::Fire()
 
 void AWeapon::ShotProjectile()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%i"), DamageAmount)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;
 	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetWeaponMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
+}
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DefaultDamage = DamageAmount;
+
+	ensureMsgf(RecoilCurve, TEXT("You should choose curve for %s"), *GetName());
+	if (RecoilCurve)
+	{
+		OnRecoilTimelineCallback.BindDynamic(this, &AWeapon::RecoilTimelineCallback);
+		OnRecoilTimelineFinish.BindUObject(this, &AWeapon::RecoilTimelineFinish);
+		WeaponTimeline->AddInterpFloat(RecoilCurve, OnRecoilTimelineCallback);
+		WeaponTimeline->SetTimelineFinishedFunc(OnRecoilTimelineFinish);
+		WeaponTimeline->SetLooping(false);
+		WeaponTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+	}
 }
 
 void AWeapon::DecreaseAmmoAmount()
@@ -126,13 +159,24 @@ void AWeapon::Reload()
 	bIsReloading = false;
 }
 
-void AWeapon::ApplyToCharacter(AFPSCharacter* Character)
+bool AWeapon::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	Super::ApplyToCharacter(Character);
+	if (!Character) return false;
+	if (Character->CheckIfCharacterHasWeapon(WeaponType) && Character->GetWeaponByType(WeaponType)->CheckIfAmmoIsFull())
+		return false;
 	if (Character->CheckIfCharacterHasWeapon(WeaponType))
 		Character->AddAmmoFromWeaponPickup(WeaponType);
 	else
 		Character->AddWeaponFromWeaponPickup(WeaponType);
+	return true;
+}
+
+bool AWeapon::CheckIfAmmoIsFull()
+{
+	if (AmmoTotal == AmmoTotalCapacity)
+		return true;
+	else
+		return false;
 }
 
 void AWeapon::ShowWeapon()
@@ -143,4 +187,9 @@ void AWeapon::ShowWeapon()
 void AWeapon::HideWeapon()
 {
 	GetWeaponMesh()->SetVisibility(false);
+}
+
+void AWeapon::ChangeDamage(int32 DamageBooster)
+{
+	DamageAmount = DamageBooster * DefaultDamage;
 }
