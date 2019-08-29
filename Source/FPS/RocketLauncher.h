@@ -16,6 +16,6 @@ class FPS_API ARocketLauncher : public AWeapon
 	
 public:
 
-	ARocketLauncher(const FObjectInitializer& ObjectInitializer);
+	ARocketLauncher();
 	
 };

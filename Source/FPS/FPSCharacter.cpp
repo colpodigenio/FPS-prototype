@@ -24,7 +24,14 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
 	FPSCamera->SetupAttachment(RootComponent);
 	GetMesh()->SetupAttachment(FPSCamera);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	GetMesh()->SetCollisionObjectType(EnemyObj);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Vehicle, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(EnemyTrace, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(EnemyObj, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(Projectile, ECR_Block);
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	JumpMaxCount = 2;
 

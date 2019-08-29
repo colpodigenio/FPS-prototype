@@ -13,14 +13,16 @@ void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherAct
 
 	if (OtherActor->GetClass() != this->GetClass())
 		Destroy();
-	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.0f, 16, FColor::Silver, true);
+	
+	OtherComp->AddImpulseAtLocation(GetVelocity() * 10.0f, GetActorLocation());
+
 	FHitResult SphereHit;
-	if(GetWorld()->SweepSingleByChannel(SphereHit, Hit.ImpactPoint, Hit.ImpactPoint, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f)))
-		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 200.f, 12, FColor::Black, false, 5.f, 0, 1.0f);
+	GetWorld()->SweepSingleByChannel(SphereHit, Hit.ImpactPoint, Hit.ImpactPoint, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f));
+	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 200.f, 12, FColor::Black, false, 5.f, 0, 1.0f);
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(SphereHit.GetActor());
 	if (Enemy)
 	{
-		OtherComp->AddRadialImpulse(SphereHit.ImpactPoint - Hit.ImpactPoint, 200.f, 1000.f, ERadialImpulseFalloff::RIF_Linear);
+		//OtherComp->AddRadialImpulse(SphereHit.ImpactPoint - Hit.ImpactPoint, 200.f, 1000.f, ERadialImpulseFalloff::RIF_Linear);
 		float DistanceToEnemy = (SphereHit.ImpactPoint - Hit.ImpactPoint).Size();
 		UE_LOG(LogTemp, Warning, TEXT("%s receives damage = %f, distance to enemy = %f"), *SphereHit.GetActor()->GetName(), DamageDone * DistanceToEnemy / 200.0f, DistanceToEnemy)
  		Enemy->ReceiveDamage(DamageDone * DistanceToEnemy / 200.0f);

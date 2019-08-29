@@ -18,7 +18,7 @@ FVector AShotgunPellet::FindShotDirection()
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
 	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCamera()->GetComponentLocation(),
-		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * UKismetMathLibrary::RandomUnitVectorInConeInDegrees(OwningCharacter->GetFPSCamera()->GetForwardVector(), 10.f), ECollisionChannel::ECC_Visibility);
+		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * UKismetMathLibrary::RandomUnitVectorInConeInDegrees(OwningCharacter->GetFPSCamera()->GetForwardVector(), 10.f), EnemyTrace);
 	FVector DirectionStartPoint = OwningWeapon->GetWeaponMesh()->GetSocketLocation("Muzzle");
 	FVector DirectionEndPoint;
 	if (HitResult.bBlockingHit)
@@ -28,3 +28,6 @@ FVector AShotgunPellet::FindShotDirection()
 	FVector ShotDirection = (DirectionEndPoint - DirectionStartPoint).GetSafeNormal();
 	return ShotDirection;
 }
+
+AShotgunPellet::AShotgunPellet()
+	: Super(){}

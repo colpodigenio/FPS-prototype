@@ -5,8 +5,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Projectile.h"
 
-AShotgun::AShotgun(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AShotgun::AShotgun()
+	: Super(FObjectInitializer::Get())
 {
 	WeaponType = EWeaponType::Shotgun;
 	AmmoTotalCapacity = 48;

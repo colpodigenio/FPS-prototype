@@ -15,6 +15,7 @@ APickupRespawnPoint::APickupRespawnPoint()
 
 	RespawnPointCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RespawnPointCollision"));
 	RootComponent = RespawnPointCollision;
+	RespawnPointCollision->SetCollisionResponseToChannel(Projectile, ECR_Ignore);
 
 	PickupComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("PickupComponent"));
 	PickupComponent->SetupAttachment(RootComponent);
@@ -33,7 +34,6 @@ APickupRespawnPoint::APickupRespawnPoint()
 	PickupSoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("PickupSoundEffect"));
 	PickupSoundEffect->SetupAttachment(RootComponent);
 
-	bIsPickupPointOccupied = false;
 	OccupyingCharacter = nullptr;
 	PickupRespawnTime = 15.0f;
 }
@@ -50,7 +50,7 @@ void APickupRespawnPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsPickupPointOccupied && PickupComponent->IsActive())
+	if (OccupyingCharacter && PickupComponent->IsActive())
 	{
 		APickup* PickupInstance = Cast<APickup>(PickupComponent->GetChildActor());
 		if (PickupInstance->TryApplyToCharacter(OccupyingCharacter))
@@ -72,22 +72,13 @@ void APickupRespawnPoint::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	UE_LOG(LogTemp, Warning, TEXT("BeginOverlap"))
 	OccupyingCharacter = Cast<AFPSCharacter>(OtherActor);
-	if (OccupyingCharacter)
-	{
-		bIsPickupPointOccupied = true;
-		UE_LOG(LogTemp, Warning, TEXT("OccupyingCharacter"))
-	}
 }
 
 void APickupRespawnPoint::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("EndOverlap"))
 	if (OtherActor == OccupyingCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("nullptr"))
-		bIsPickupPointOccupied = false;
 		OccupyingCharacter = nullptr;
-	}
 }
 
 void APickupRespawnPoint::DeactivatePickup()

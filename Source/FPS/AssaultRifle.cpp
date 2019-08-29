@@ -4,8 +4,8 @@
 #include "FPS.h"
 #include "Projectile.h"
 
-AAssaultRifle::AAssaultRifle(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AAssaultRifle::AAssaultRifle()
+	: Super(FObjectInitializer::Get())
 {
 	WeaponType = EWeaponType::AssaultRifle;
 	AmmoTotalCapacity = 180;

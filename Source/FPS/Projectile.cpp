@@ -9,15 +9,19 @@
 #include "Weapon.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 
-// Maybe it is good to use AbstractFactory to implement projectiles?
-
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateAbstractDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
-	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
+	Mesh->SetCollisionObjectType(Projectile);
+	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(Projectile, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(EnemyTrace, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(EnemyObj, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	ProjectileMovement = CreateAbstractDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	DamageDone = 20.0f;
 
@@ -48,27 +52,24 @@ void AProjectile::SetProjectileInitialVelocity()
 	ProjectileMovement->Velocity = FindShotDirection();
 }
 
+#include "DrawDebugHelpers.h"
 FVector AProjectile::FindShotDirection()
 {
 	AWeapon* OwningWeapon = Cast<AWeapon>(GetOwner());
 	if (!OwningWeapon)
 		return FVector(0.0f);
-	ensureMsgf(OwningWeapon, TEXT("When shooting this projectile you should set the shooting weapon as an owner in FActorSpawnParameters"));
+
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
 	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCamera()->GetComponentLocation(),
-		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * OwningCharacter->GetFPSCamera()->GetForwardVector(), ECollisionChannel::ECC_Visibility);
+		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * OwningCharacter->GetFPSCamera()->GetForwardVector(), EnemyTrace);
 	FVector DirectionStartPoint = OwningWeapon->GetWeaponMesh()->GetSocketLocation("Muzzle");
 	FVector DirectionEndPoint;
-	if(HitResult.bBlockingHit)
-		DirectionEndPoint = HitResult.ImpactPoint;
-	else
-		DirectionEndPoint = HitResult.TraceEnd;
+	HitResult.bBlockingHit ? DirectionEndPoint = HitResult.ImpactPoint : DirectionEndPoint = HitResult.TraceEnd;
 	FVector ShotDirection = (DirectionEndPoint - DirectionStartPoint).GetSafeNormal();
 	return ShotDirection;
 }
 
-#include "DrawDebugHelpers.h"
 
 void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -78,10 +79,15 @@ void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
 	if (Enemy)
 	{
- 		if(Hit.PhysMaterial->SurfaceType == Head)
+		if (Hit.PhysMaterial == nullptr)
+			return;
+ 		if(Hit.PhysMaterial->SurfaceType.GetValue() == Head)
  			Enemy->ReceiveDamage(3 * DamageDone);
- 		else
- 			Enemy->ReceiveDamage(DamageDone);
+		else
+		{
+			Enemy->ReceiveDamage(DamageDone);
+			UE_LOG(LogTemp, Warning, TEXT("gsdfgds"))
+		}
 	}
 }
 

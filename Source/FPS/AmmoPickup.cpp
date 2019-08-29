@@ -6,9 +6,10 @@
 
 bool AAmmoPickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	if (!Character) return false;
 	checkf(WeaponType != EWeaponType::None, TEXT("Weapon type in ammo class is not set"))
 	AWeapon* WeaponToAddAmmoTo = Character->GetWeaponByType(WeaponType);
+	if (!WeaponToAddAmmoTo)
+		return false;
 	if (WeaponToAddAmmoTo->CheckIfAmmoIsFull())
 		return false;
 	else

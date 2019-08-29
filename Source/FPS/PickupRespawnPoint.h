@@ -31,7 +31,6 @@ class FPS_API APickupRespawnPoint : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UAudioComponent* PickupSoundEffect;
 
-	bool bIsPickupPointOccupied;
 	AFPSCharacter* OccupyingCharacter;
 	FTimerHandle PickupActivationTimer;
 	float PickupRespawnTime;

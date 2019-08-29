@@ -54,6 +54,7 @@ void AWeapon::StartFire()
 		ShotDelay = FMath::Max(1 / FireRate - (GetWorld()->TimeSeconds - LastShotTime), 0.0f);
 	else
 		ShotDelay = 0.0f;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), ShotDelay)
 	bFirstShotFired = true;
 	GetWorldTimerManager().SetTimer(FireTimer, this, &AWeapon::Fire, 1 / FireRate, true, ShotDelay);
 }
@@ -94,6 +95,7 @@ void AWeapon::ShotProjectile()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;
+	ensureMsgf(SpawnParams.Owner, TEXT("When shooting this projectile you should set the shooting weapon as an owner in FActorSpawnParameters"));
 	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetWeaponMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
 }
 
@@ -161,13 +163,9 @@ void AWeapon::Reload()
 
 bool AWeapon::TryApplyToCharacter(AFPSCharacter* Character)
 {
-	if (!Character) return false;
 	if (Character->CheckIfCharacterHasWeapon(WeaponType) && Character->GetWeaponByType(WeaponType)->CheckIfAmmoIsFull())
 		return false;
-	if (Character->CheckIfCharacterHasWeapon(WeaponType))
-		Character->AddAmmoFromWeaponPickup(WeaponType);
-	else
-		Character->AddWeaponFromWeaponPickup(WeaponType);
+	Character->CheckIfCharacterHasWeapon(WeaponType) ? Character->AddAmmoFromWeaponPickup(WeaponType) :	Character->AddWeaponFromWeaponPickup(WeaponType);
 	return true;
 }
 
