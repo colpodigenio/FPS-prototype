@@ -35,6 +35,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void EnablePowerup(EPowerupType PowerupType);
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsPowerupEnabled() const { return bIsPowerupEnabled; };
 	
 };

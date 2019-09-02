@@ -29,26 +29,29 @@ class FPS_API AWeapon : public APickup
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	UCurveFloat* RecoilCurve;
 
+	virtual void Fire();
 	UFUNCTION()
 	void RecoilTimelineCallback(float Value);
 	UFUNCTION()
 	void RecoilTimelineFinish();
 	void AddRecoil();
-	virtual void Fire();
 	void DecreaseAmmoAmount();
 	void Reload();
 
 protected:
 
+	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoTotalCapacity; // total ammo that can be carried excluding ammo in weapon
+	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoMagazineCapacity;
+	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoTotal; // ammo excluding ammo in magazine 
+	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoInMagazine;
 	int32 DamageAmount;
 	int32 DefaultDamage;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 DamageBooster;
-	//float RecoilValue;
 	float FireRate; // shots in second
 	float ReloadTime; // seconds
 	float LastShotTime;
@@ -71,16 +74,20 @@ public:
 
 	FOnTimelineFloat OnRecoilTimelineCallback;
 	FOnTimelineEventStatic OnRecoilTimelineFinish;
-	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
-	void AddAmmo(int32 AmountOfMagazines);
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void Aim();
 	virtual void StartReload();
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
-	bool CheckIfAmmoIsFull();
+	void AddAmmo(int32 AmountOfMagazines);
 	void ShowWeapon();
 	void HideWeapon();
-	FORCEINLINE int32 GetDamageBooster() const { return DamageBooster; };
 	void ChangeDamage(int32 DamageBooster);
+	bool CheckIfAmmoIsFull();
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetAmmoTotal() const { return AmmoTotal; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; };
+	FORCEINLINE int32 GetDamageBooster() const { return DamageBooster; };
 };

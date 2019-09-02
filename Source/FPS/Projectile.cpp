@@ -8,6 +8,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Perception/AISense_Damage.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AProjectile::AProjectile()
 {
@@ -73,21 +75,26 @@ FVector AProjectile::FindShotDirection()
 
 void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if(OtherActor->GetClass() != this->GetClass())
-		Destroy();
 	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.0f, 16, FColor::Emerald, true);
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
 	if (Enemy)
 	{
 		if (Hit.PhysMaterial == nullptr)
 			return;
- 		if(Hit.PhysMaterial->SurfaceType.GetValue() == Head)
- 			Enemy->ReceiveDamage(3 * DamageDone);
+		if (Hit.PhysMaterial->SurfaceType.GetValue() == Head)
+			Enemy->ReceiveDamage(3 * DamageDone);
 		else
-		{
 			Enemy->ReceiveDamage(DamageDone);
-			UE_LOG(LogTemp, Warning, TEXT("gsdfgds"))
-		}
+		ReportDamageSense(Enemy);
 	}
+	Destroy();
 }
+
+void AProjectile::ReportDamageSense(AFPSCharacter* EnemyToReport)
+{
+	AFPSCharacter* WeaponOwner = Cast<AFPSCharacter>((GetOwner()->GetOwner()));
+	FVector DamageInstigatorLocation = UKismetMathLibrary::RandomPointInBoundingBox(WeaponOwner->GetActorLocation(), FVector(400.0f, 400.0f, 50.0f));
+	UAISense_Damage::ReportDamageEvent(GetWorld(), EnemyToReport, WeaponOwner, 0.0f, DamageInstigatorLocation, DamageInstigatorLocation);
+}
+
 

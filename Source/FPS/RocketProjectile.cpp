@@ -10,10 +10,6 @@
 
 void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
-	if (OtherActor->GetClass() != this->GetClass())
-		Destroy();
-	
 	OtherComp->AddImpulseAtLocation(GetVelocity() * 10.0f, GetActorLocation());
 
 	FHitResult SphereHit;
@@ -26,5 +22,7 @@ void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherAct
 		float DistanceToEnemy = (SphereHit.ImpactPoint - Hit.ImpactPoint).Size();
 		UE_LOG(LogTemp, Warning, TEXT("%s receives damage = %f, distance to enemy = %f"), *SphereHit.GetActor()->GetName(), DamageDone * DistanceToEnemy / 200.0f, DistanceToEnemy)
  		Enemy->ReceiveDamage(DamageDone * DistanceToEnemy / 200.0f);
+		ReportDamageSense(Enemy);
 	}
+	Destroy();
 }

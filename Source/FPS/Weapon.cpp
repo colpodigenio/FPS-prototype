@@ -11,6 +11,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AISense_Hearing.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(AWeapon::MeshComponentName))
@@ -95,7 +97,9 @@ void AWeapon::ShotProjectile()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;
-	ensureMsgf(SpawnParams.Owner, TEXT("When shooting this projectile you should set the shooting weapon as an owner in FActorSpawnParameters"));
+	FVector NoiseLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(400.0f, 400.0f, 50.0f));
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), NoiseLocation, 1.f, GetOwner(), 5000.0f);
+	ensureMsgf(SpawnParams.Owner, TEXT("When shooting this projectile you should set the firing weapon as an owner in FActorSpawnParameters"));
 	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetWeaponMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
 }
 

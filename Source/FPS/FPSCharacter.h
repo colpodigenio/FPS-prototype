@@ -79,6 +79,7 @@ public:
 	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
 	FORCEINLINE UPowerupComponent* GetPowerupComponent() const { return PowerupComponent; };
+	UFUNCTION(BlueprintPure)
 	AWeapon* GetWeaponByType(EWeaponType WeaponType);
 	bool CheckIfHealthIsFull();
 	bool CheckiIfArmorIsFull();

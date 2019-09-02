@@ -8,6 +8,7 @@
 
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
+class AFPSCharacter;
 
 UCLASS()
 class FPS_API AProjectile : public AActor
@@ -36,4 +37,5 @@ protected:
 	virtual FVector FindShotDirection();
 	UFUNCTION()
 	virtual void HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void ReportDamageSense(AFPSCharacter* EnemyToReport);
 };
