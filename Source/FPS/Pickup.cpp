@@ -33,3 +33,15 @@ bool APickup::TryApplyToCharacter(AFPSCharacter* Character)
 	return true;
 }
 
+void APickup::ShowMesh()
+{
+	if(Mesh)
+		Mesh->SetVisibility(true);
+}
+
+void APickup::HideMesh()
+{
+	if(Mesh)
+		Mesh->SetVisibility(false);
+}
+

@@ -24,7 +24,7 @@ class FPS_API UPowerupComponent : public UActorComponent
 	float SpeedBoostDuration;
 	float DamageBoostDuration;
 	int32 RegenerationDuration;
-	TWeakObjectPtr<AFPSCharacter> OwningCharacter;
+	TWeakObjectPtr<AFPSCharacter> OwningCharacterRef;
 	FTimerHandle PowerupTimer;
 
 protected:

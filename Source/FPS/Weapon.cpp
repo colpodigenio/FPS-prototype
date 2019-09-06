@@ -181,12 +181,12 @@ bool AWeapon::CheckIfAmmoIsFull()
 		return false;
 }
 
-void AWeapon::ShowWeapon()
+void AWeapon::ShowMesh()
 {
 	GetWeaponMesh()->SetVisibility(true);
 }
 
-void AWeapon::HideWeapon()
+void AWeapon::HideMesh()
 {
 	GetWeaponMesh()->SetVisibility(false);
 }

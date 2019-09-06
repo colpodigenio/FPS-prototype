@@ -33,7 +33,9 @@ class FPS_API APickupRespawnPoint : public AActor
 
 	AFPSCharacter* OccupyingCharacter;
 	FTimerHandle PickupActivationTimer;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float PickupRespawnTime;
+	TWeakObjectPtr<APickup> ChildPickupRef;
 
 	void ActivatePickup();
 	void StartPickupActivationTimer();

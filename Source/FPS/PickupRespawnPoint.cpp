@@ -42,6 +42,8 @@ void APickupRespawnPoint::BeginPlay()
 {
 	Super::BeginPlay();	
 
+	ChildPickupRef = Cast<APickup>(PickupComponent->GetChildActor());
+
  	RespawnPointCollision->OnComponentBeginOverlap.AddDynamic(this, &APickupRespawnPoint::BeginOverlap);
  	RespawnPointCollision->OnComponentEndOverlap.AddDynamic(this, &APickupRespawnPoint::EndOverlap);
 }
@@ -70,22 +72,19 @@ void APickupRespawnPoint::OnConstruction(const FTransform& Transform)
 
 void APickupRespawnPoint::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("BeginOverlap"))
 	OccupyingCharacter = Cast<AFPSCharacter>(OtherActor);
 }
 
 void APickupRespawnPoint::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EndOverlap"))
 	if (OtherActor == OccupyingCharacter)
 		OccupyingCharacter = nullptr;
 }
 
 void APickupRespawnPoint::DeactivatePickup()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Deactivate"))
+	ChildPickupRef->HideMesh();
 	PickupComponent->Deactivate();
-	PickupComponent->SetVisibility(false);
 	if (PickupVisualEffect)
 		PickupVisualEffect->ActivateSystem(true);
 	if (PickupSoundEffect)
@@ -94,13 +93,11 @@ void APickupRespawnPoint::DeactivatePickup()
 
 void APickupRespawnPoint::StartPickupActivationTimer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartTimer"))
 	GetWorldTimerManager().SetTimer(PickupActivationTimer, this, &APickupRespawnPoint::ActivatePickup, PickupRespawnTime, false);
 }
 
 void APickupRespawnPoint::ActivatePickup()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Activate"))
 	PickupComponent->Activate();
-	PickupComponent->SetVisibility(true);
+	ChildPickupRef->ShowMesh();
 }

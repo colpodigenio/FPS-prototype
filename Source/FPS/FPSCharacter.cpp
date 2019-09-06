@@ -236,9 +236,9 @@ void AFPSCharacter::UseExplosive()
 
 void AFPSCharacter::TakeNewWeapon(EWeaponType NewWeaponType)
 {
-	CurrentWeapon->HideWeapon();
+	CurrentWeapon->HideMesh();
 	CurrentWeapon = WeaponInventory.FindRef(NewWeaponType);
-	CurrentWeapon->ShowWeapon();
+	CurrentWeapon->ShowMesh();
 }
 
 void AFPSCharacter::TakeAssaultRifle()

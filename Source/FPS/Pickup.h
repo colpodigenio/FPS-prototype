@@ -21,6 +21,8 @@ public:
 	APickup(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void Tick(float DeltaTime) override;	
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character);
+	virtual void ShowMesh();
+	virtual void HideMesh();
 
 
 protected:

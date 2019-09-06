@@ -13,6 +13,14 @@ class AWeapon;
 class USkeletalMeshComponent;
 class UPowerupComponent;
 
+UENUM(BlueprintType)
+enum class EBotDifficulty : uint8
+{
+	Easy,
+	Medium,
+	Hard
+};
+
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
 {
@@ -40,6 +48,8 @@ class FPS_API AFPSCharacter : public ACharacter
 	bool bIsRunning;
 	float MovementMultiplier;
 	float LastMovementMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	EBotDifficulty BotDifficulty;
 
 	FVector LastLocation; // TO DELETE temporary variable to determine movement speed for debug
 

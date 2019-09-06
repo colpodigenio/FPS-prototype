@@ -19,7 +19,7 @@ void UPowerupComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwningCharacter = Cast<AFPSCharacter>(GetOwner());
+	OwningCharacterRef = Cast<AFPSCharacter>(GetOwner());
 }
 
 void UPowerupComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -46,33 +46,33 @@ void UPowerupComponent::EnablePowerup(EPowerupType PowerupType)
 
 void UPowerupComponent::EnableSpeedBoost()
 {
-	OwningCharacter->GetCharacterMovement()->MaxWalkSpeed = 1600.0f;
+	OwningCharacterRef->GetCharacterMovement()->MaxWalkSpeed = 1600.0f;
 	GetWorld()->GetTimerManager().SetTimer(PowerupTimer, this, &UPowerupComponent::DisableSpeedBoost, SpeedBoostDuration, false);
 }
 
 void UPowerupComponent::EnableDamageBoost()
 {
-	OwningCharacter->EnableDamageBoost();
+	OwningCharacterRef->EnableDamageBoost();
 	GetWorld()->GetTimerManager().SetTimer(PowerupTimer, this, &UPowerupComponent::DisableDamageBoost, DamageBoostDuration, false);
 }
 
 void UPowerupComponent::EnableRegeneration()
 {
-	OwningCharacter->GetHealthComponent()->StartRegenerateHealthTimer(RegenerationDuration);
+	OwningCharacterRef->GetHealthComponent()->StartRegenerateHealthTimer(RegenerationDuration);
 	GetWorld()->GetTimerManager().SetTimer(PowerupTimer, this, &UPowerupComponent::DisableRegeneration, static_cast<float>(RegenerationDuration), false);
 }
 
 void UPowerupComponent::DisableSpeedBoost()
 {
 	bIsPowerupEnabled = false;
-	OwningCharacter->GetCharacterMovement()->MaxWalkSpeed = 800.0f;
+	OwningCharacterRef->GetCharacterMovement()->MaxWalkSpeed = 800.0f;
 	UE_LOG(LogTemp, Warning, TEXT("SpeedBoost disabled"))
 }
 
 void UPowerupComponent::DisableDamageBoost()
 {
 	bIsPowerupEnabled = false;
-	OwningCharacter->DisableDamageBoost();
+	OwningCharacterRef->DisableDamageBoost();
 	UE_LOG(LogTemp, Warning, TEXT("DamageBoost disabled"))
 }
 

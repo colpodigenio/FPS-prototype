@@ -80,8 +80,9 @@ public:
 	virtual void StartReload();
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 	void AddAmmo(int32 AmountOfMagazines);
-	void ShowWeapon();
-	void HideWeapon();
+	void ShowMesh() override;
+	void HideMesh() override;
+
 	void ChangeDamage(int32 DamageBooster);
 	bool CheckIfAmmoIsFull();
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
