@@ -19,7 +19,9 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	RootComponent = WeaponMesh;
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	WeaponMesh->SetCollisionResponseToChannel(PICKUP_TRACE, ECR_Overlap);
 	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MuzzleFlashEffect"));
 	MuzzleFlashEffect->SetupAttachment(GetWeaponMesh(), TEXT("Muzzle"));
 	MuzzleFlashEffect->SetAutoActivate(false);
@@ -32,6 +34,7 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	bIsReloading = false;
 	bFirstShotFired = false;
 	WeaponType = EWeaponType::None;
+	PickupType = EPickupType::Weapon;
 }
 
 void AWeapon::AddAmmo(int32 AmountOfMagazines)
@@ -183,11 +186,13 @@ bool AWeapon::CheckIfAmmoIsFull()
 
 void AWeapon::ShowMesh()
 {
+	Super::ShowMesh();
 	GetWeaponMesh()->SetVisibility(true);
 }
 
 void AWeapon::HideMesh()
 {
+	Super::HideMesh();
 	GetWeaponMesh()->SetVisibility(false);
 }
 

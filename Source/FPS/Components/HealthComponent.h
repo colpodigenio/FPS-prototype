@@ -12,6 +12,33 @@ class FPS_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:	
+	UHealthComponent();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetHealth() const { return Health; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetHealthMax() const { return HealthMax; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetArmor() const { return Armor; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetArmorMax() const { return ArmorMax; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsDead() const { return bIsDead; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsRegenerating() const { return bIsRegenerating; };
+
+	UFUNCTION(BlueprintCallable, Category = "Health Component")
+	void ApplyHeal(int32 HealDelta);
+	UFUNCTION(BlueprintCallable, Category = "Health Component")
+	void AddArmor(int32 ArmorDelta, bool CanBoostMaxArmor);
+	UFUNCTION(BlueprintCallable, Category = "Health Component")
+	void ApplyDamage(int32 DamageDelta);
+	UFUNCTION(BlueprintCallable, Category = "Health Component")
+	void StartRegenerateHealthTimer(int32 NewRegenerationDuration); // this function is called by regeneration power up
+
+private:
+
 	int32 HealthMax;
 	int32 HealthMaxBoosted;
 	int32 Health;
@@ -33,30 +60,4 @@ class FPS_API UHealthComponent : public UActorComponent
 	void RevertHealthToMax();
 	void StopRevertHealthToMaxTimer();
 	void Die();
-
-public:	
-	UHealthComponent();
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetHealth() const { return Health; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetHealthMax() const { return HealthMax; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetArmor() const { return Armor; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetArmorMax() const { return ArmorMax; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsDead() const { return bIsDead; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsRegenerating() const { return bIsRegenerating; };
-
-	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void ApplyHeal(int32 HealDelta);
-	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void AddArmor(int32 ArmorDelta);
-	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void ApplyDamage(int32 DamageDelta);
-	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void StartRegenerateHealthTimer(int32 NewRegenerationDuration); // this function is called by regeneration power up
-
 };

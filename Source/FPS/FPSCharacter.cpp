@@ -25,13 +25,13 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	FPSCamera->SetupAttachment(RootComponent);
 	GetMesh()->SetupAttachment(FPSCamera);
 	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
-	GetMesh()->SetCollisionObjectType(EnemyObj);
+	GetMesh()->SetCollisionObjectType(ENEMY_OBJ);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Vehicle, ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(EnemyTrace, ECR_Ignore);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(EnemyObj, ECR_Ignore);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(Projectile, ECR_Block);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ENEMY_TRACE, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ENEMY_OBJ, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(PROJECTILE_OBJ, ECR_Block);
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	JumpMaxCount = 2;
 
@@ -268,12 +268,22 @@ void AFPSCharacter::TakeRocketLauncher()
 	}
 }
 
+int32 AFPSCharacter::GetHealth() const
+{
+	return HealthComponent->GetHealth();
+}
+
 bool AFPSCharacter::CheckIfHealthIsFull()
 {
 	if (HealthComponent->GetHealth() >= HealthComponent->GetHealthMax())
 		return true;
 	else
 		return false;
+}
+
+int32 AFPSCharacter::GetArmor() const
+{
+	return HealthComponent->GetArmor();
 }
 
 bool AFPSCharacter::CheckiIfArmorIsFull()
@@ -331,8 +341,27 @@ void AFPSCharacter::AddWeaponFromWeaponPickup(EWeaponType WeaponType)
 	WeaponInventory.Emplace(WeaponType, SpawnWeaponFromPickup(WeaponType));
 }
 
+FVector AFPSCharacter::GetFPSCameraLocation() const
+{
+	return FPSCamera->GetComponentLocation();
+}
+
+FVector AFPSCharacter::GetFPSCameraForwardVector() const
+{
+	return FPSCamera->GetForwardVector();
+}
+
+bool AFPSCharacter::IsPowerupEnabled() const
+{
+	return PowerupComponent->IsPowerupEnabled();
+}
+
+void AFPSCharacter::EnablePowerup(EPowerupType PowerupType)
+{
+	PowerupComponent->EnablePowerup(PowerupType);
+}
+
 AWeapon* AFPSCharacter::GetWeaponByType(EWeaponType WeaponType)
 {
 	return WeaponInventory.FindRef(WeaponType);
 }
-

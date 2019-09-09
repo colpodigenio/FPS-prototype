@@ -13,9 +13,6 @@ class UWeaponInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class FPS_API IWeaponInterface
 {
 	GENERATED_BODY()

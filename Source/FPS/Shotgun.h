@@ -14,11 +14,13 @@ class FPS_API AShotgun : public AWeapon
 {
 	GENERATED_BODY()
 
-	int32 AmountOfPelletsInShell;
-	
 public:
 	
 	AShotgun();
 	virtual void ShotProjectile() override;
+
+private:
+
+	int32 AmountOfPelletsInShell;
 	
 };

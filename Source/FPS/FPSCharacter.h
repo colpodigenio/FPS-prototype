@@ -26,21 +26,59 @@ class FPS_API AFPSCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
+	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void ReceiveDamage(int32 DamageAmount);
+	bool CheckIfCharacterHasWeapon(EWeaponType WeaponType);
+	void AddAmmoFromWeaponPickup(EWeaponType WeaponType);
+	UFUNCTION(BlueprintImplementableEvent)
+	AWeapon* SpawnWeaponFromPickup(EWeaponType WeaponType);
+	void AddWeaponFromWeaponPickup(EWeaponType WeaponType);
+	FVector GetFPSCameraLocation() const;
+	FVector GetFPSCameraForwardVector() const;
+	bool IsPowerupEnabled() const;
+	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	void EnablePowerup(EPowerupType PowerupType);
+	UFUNCTION(BlueprintPure)
+	AWeapon* GetWeaponByType(EWeaponType WeaponType);
+	int32 GetHealth() const;
+	bool CheckIfHealthIsFull();
+	int32 GetArmor() const;
+	bool CheckiIfArmorIsFull();
+	void EnableDamageBoost();
+	void DisableDamageBoost();
+
+	const float RunningMultiplier = 0.55; // walking is 2 times slower
+
+protected:
+
+	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowScore();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HideScore();
+
+private:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UPowerupComponent* PowerupComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
-	UPROPERTY(EditDefaultsOnly, meta =(AllowPrivateAccess = "true"))
-	FName InventorySocketName;	
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	FName InventorySocketName;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AWeapon* CurrentWeapon;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TMap<EWeaponType, AWeapon*> WeaponInventory;
 
 	float Stamina;	// time in seconds which character can sprint
-	float StaminaMax; 
+	float StaminaMax;
 	bool bIsSprinting;
 	bool bIsMoving;
 	bool bIsMovingForward;
@@ -73,36 +111,4 @@ class FPS_API AFPSCharacter : public ACharacter
 	void TakeAssaultRifle();
 	void TakeShotgun();
 	void TakeRocketLauncher();
-
-public:
-
-	AFPSCharacter(const FObjectInitializer& ObjectInitializer);
-	virtual void Tick(float DeltaTime) override;
-	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void ReceiveDamage(int32 DamageAmount);
-	bool CheckIfCharacterHasWeapon(EWeaponType WeaponType);
-	void AddAmmoFromWeaponPickup(EWeaponType WeaponType);
-	UFUNCTION(BlueprintImplementableEvent)
-	AWeapon* SpawnWeaponFromPickup(EWeaponType WeaponType);
-	void AddWeaponFromWeaponPickup(EWeaponType WeaponType);
-	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
-	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
-	FORCEINLINE UPowerupComponent* GetPowerupComponent() const { return PowerupComponent; };
-	UFUNCTION(BlueprintPure)
-	AWeapon* GetWeaponByType(EWeaponType WeaponType);
-	bool CheckIfHealthIsFull();
-	bool CheckiIfArmorIsFull();
-	void EnableDamageBoost();
-	void DisableDamageBoost();
-	const float RunningMultiplier = 0.55; // walking is 2 times slower
-
-protected:
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void ShowScore();
-	UFUNCTION(BlueprintImplementableEvent)
-	void HideScore();
-
-	virtual void BeginPlay() override;
 };

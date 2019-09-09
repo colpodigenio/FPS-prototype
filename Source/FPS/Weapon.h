@@ -18,25 +18,30 @@ class FPS_API AWeapon : public APickup
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* WeaponMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* MuzzleFlashEffect;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* ShotSoundEffect;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UTimelineComponent* WeaponTimeline;
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	UCurveFloat* RecoilCurve;
+public:
 
-	virtual void Fire();
-	UFUNCTION()
-	void RecoilTimelineCallback(float Value);
-	UFUNCTION()
-	void RecoilTimelineFinish();
-	void AddRecoil();
-	void DecreaseAmmoAmount();
-	void Reload();
+	AWeapon(const FObjectInitializer& ObjectInitializer);
+
+	FOnTimelineFloat OnRecoilTimelineCallback;
+	FOnTimelineEventStatic OnRecoilTimelineFinish;
+	virtual void StartFire();
+	virtual void StopFire();
+	virtual void Aim();
+	virtual void StartReload();
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
+	void AddAmmo(int32 AmountOfMagazines);
+	void ShowMesh() override;
+	void HideMesh() override;
+
+	void ChangeDamage(int32 DamageBooster);
+	bool CheckIfAmmoIsFull();
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetAmmoTotal() const { return AmmoTotal; };
+	FORCEINLINE float GetRelativeAmmoCapacity() const { return (AmmoTotal + AmmoInMagazine) / (AmmoTotalCapacity + AmmoMagazineCapacity); };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; };
+	FORCEINLINE int32 GetDamageBooster() const { return DamageBooster; };
 
 protected:
 
@@ -68,27 +73,25 @@ protected:
 	virtual void ShotProjectile();
 	virtual void BeginPlay() override;
 
-public:
-	
-	AWeapon(const FObjectInitializer& ObjectInitializer);
+private:
 
-	FOnTimelineFloat OnRecoilTimelineCallback;
-	FOnTimelineEventStatic OnRecoilTimelineFinish;
-	virtual void StartFire();
-	virtual void StopFire();
-	virtual void Aim();
-	virtual void StartReload();
-	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
-	void AddAmmo(int32 AmountOfMagazines);
-	void ShowMesh() override;
-	void HideMesh() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* WeaponMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* MuzzleFlashEffect;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* ShotSoundEffect;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UTimelineComponent* WeaponTimeline;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UCurveFloat* RecoilCurve;
 
-	void ChangeDamage(int32 DamageBooster);
-	bool CheckIfAmmoIsFull();
-	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetAmmoTotal() const { return AmmoTotal; };
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; };
-	FORCEINLINE int32 GetDamageBooster() const { return DamageBooster; };
+	virtual void Fire();
+	UFUNCTION()
+	void RecoilTimelineCallback(float Value);
+	UFUNCTION()
+	void RecoilTimelineFinish();
+	void AddRecoil();
+	void DecreaseAmmoAmount();
+	void Reload();
 };

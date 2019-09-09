@@ -8,12 +8,14 @@
 APowerupPickup::APowerupPickup()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	PickupType = EPickupType::Powerup;
 }
 
 bool APowerupPickup::TryApplyToCharacter(AFPSCharacter* Character)
 {
 
-	if (Character->GetPowerupComponent()->IsPowerupEnabled())
+	if (Character->IsPowerupEnabled())
 	{
 		return false;
 	}
@@ -26,5 +28,5 @@ bool APowerupPickup::TryApplyToCharacter(AFPSCharacter* Character)
 
 void APowerupPickup::ApplyPowerup(AFPSCharacter* Character, EPowerupType PowerupType)
 {
-	Character->GetPowerupComponent()->EnablePowerup(PowerupType);
+	Character->EnablePowerup(PowerupType);
 }

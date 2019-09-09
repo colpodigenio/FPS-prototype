@@ -13,14 +13,20 @@ APickup::APickup(const FObjectInitializer& ObjectInitializer)
 
 	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(MeshComponentName);
 	RootComponent = Mesh;
-	if(Mesh)
+	if (Mesh)
+	{
 		Mesh->SetCollisionResponseToAllChannels(ECR_Overlap);
+		//Mesh->SetCollisionResponseToChannel(Pickup, ECR_Block);
+	}
+	bIsPickupActive = true;
+	PickupType = EPickupType::None;
+	PickupValue = 1.0f;
 }
 
 void APickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ensureMsgf(PickupType > EPickupType::None, TEXT("Choose pickup type for %s"), *GetName());
 }
 
 void APickup::Tick(float DeltaTime)
@@ -37,11 +43,13 @@ void APickup::ShowMesh()
 {
 	if(Mesh)
 		Mesh->SetVisibility(true);
+	bIsPickupActive = true;
 }
 
 void APickup::HideMesh()
 {
 	if(Mesh)
 		Mesh->SetVisibility(false);
+	bIsPickupActive = false;
 }
 

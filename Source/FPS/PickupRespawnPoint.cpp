@@ -15,7 +15,8 @@ APickupRespawnPoint::APickupRespawnPoint()
 
 	RespawnPointCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RespawnPointCollision"));
 	RootComponent = RespawnPointCollision;
-	RespawnPointCollision->SetCollisionResponseToChannel(Projectile, ECR_Ignore);
+	RespawnPointCollision->SetCollisionResponseToChannel(PROJECTILE_OBJ, ECR_Ignore);
+	RespawnPointCollision->SetCollisionResponseToChannel(PICKUP_TRACE, ECR_Ignore);
 
 	PickupComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("PickupComponent"));
 	PickupComponent->SetupAttachment(RootComponent);
@@ -54,8 +55,7 @@ void APickupRespawnPoint::Tick(float DeltaTime)
 
 	if (OccupyingCharacter && PickupComponent->IsActive())
 	{
-		APickup* PickupInstance = Cast<APickup>(PickupComponent->GetChildActor());
-		if (PickupInstance->TryApplyToCharacter(OccupyingCharacter))
+		if (ChildPickupRef->TryApplyToCharacter(OccupyingCharacter))
 		{
 			DeactivatePickup();
 			StartPickupActivationTimer();

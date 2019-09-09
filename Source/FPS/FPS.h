@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 
 // Physical surface macros
-#define Head EPhysicalSurface::SurfaceType1
-#define Body EPhysicalSurface::SurfaceType2
+#define HEAD_SURFACE EPhysicalSurface::SurfaceType1
+#define BODY_SURFACE EPhysicalSurface::SurfaceType2
 // Collision channels macros
-#define EnemyTrace ECC_GameTraceChannel1
-#define EnemyObj ECC_GameTraceChannel2
-#define Projectile ECC_GameTraceChannel3
+#define ENEMY_TRACE ECC_GameTraceChannel1
+#define ENEMY_OBJ ECC_GameTraceChannel2
+#define PROJECTILE_OBJ ECC_GameTraceChannel3
+#define PICKUP_TRACE ECC_GameTraceChannel4
 
 
 UENUM(BlueprintType)
@@ -29,4 +30,17 @@ enum class EPowerupType : uint8
 	SpeedBoost,
 	DamageBoost,
 	HealthRegeneration
+};
+
+UENUM(BlueprintType)
+enum class EPickupType : uint8
+{
+	None,
+	Health,
+	Armor,
+	AssaultRifleAmmo,
+	ShotgunAmmo,
+	RocketLauncherAmmo,
+	Weapon,
+	Powerup
 };

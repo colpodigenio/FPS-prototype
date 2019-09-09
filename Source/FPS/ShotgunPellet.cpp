@@ -17,8 +17,8 @@ FVector AShotgunPellet::FindShotDirection()
 	ensureMsgf(OwningWeapon, TEXT("When shooting this projectile you should set the shooting weapon as an owner in FActorSpawnParameters"));
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
-	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCamera()->GetComponentLocation(),
-		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * UKismetMathLibrary::RandomUnitVectorInConeInDegrees(OwningCharacter->GetFPSCamera()->GetForwardVector(), 10.f), EnemyTrace);
+	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCameraLocation(),
+		OwningCharacter->GetFPSCameraLocation() + 100000 * UKismetMathLibrary::RandomUnitVectorInConeInDegrees(OwningCharacter->GetFPSCameraForwardVector(), 10.f), ENEMY_TRACE);
 	FVector DirectionStartPoint = OwningWeapon->GetWeaponMesh()->GetSocketLocation("Muzzle");
 	FVector DirectionEndPoint;
 	if (HitResult.bBlockingHit)

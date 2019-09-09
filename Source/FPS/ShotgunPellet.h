@@ -14,8 +14,8 @@ class FPS_API AShotgunPellet : public AProjectile
 {
 	GENERATED_BODY()
 
-	virtual FVector FindShotDirection() override;
-
 public:
 	AShotgunPellet();
+private:
+	virtual FVector FindShotDirection() override;
 };

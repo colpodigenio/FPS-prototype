@@ -17,11 +17,11 @@ AProjectile::AProjectile()
 
 	Mesh = CreateAbstractDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
-	Mesh->SetCollisionObjectType(Projectile);
+	Mesh->SetCollisionObjectType(PROJECTILE_OBJ);
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(Projectile, ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(EnemyTrace, ECR_Block);
-	Mesh->SetCollisionResponseToChannel(EnemyObj, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(PROJECTILE_OBJ, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ENEMY_TRACE, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ENEMY_OBJ, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	ProjectileMovement = CreateAbstractDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
@@ -63,8 +63,8 @@ FVector AProjectile::FindShotDirection()
 
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
-	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCamera()->GetComponentLocation(),
-		OwningCharacter->GetFPSCamera()->GetComponentLocation() + 100000 * OwningCharacter->GetFPSCamera()->GetForwardVector(), EnemyTrace);
+	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCameraLocation(),
+		OwningCharacter->GetFPSCameraLocation() + 100000 * OwningCharacter->GetFPSCameraForwardVector(), ENEMY_TRACE);
 	FVector DirectionStartPoint = OwningWeapon->GetWeaponMesh()->GetSocketLocation("Muzzle");
 	FVector DirectionEndPoint;
 	HitResult.bBlockingHit ? DirectionEndPoint = HitResult.ImpactPoint : DirectionEndPoint = HitResult.TraceEnd;
@@ -81,7 +81,7 @@ void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	{
 		if (Hit.PhysMaterial == nullptr)
 			return;
-		if (Hit.PhysMaterial->SurfaceType.GetValue() == Head)
+		if (Hit.PhysMaterial->SurfaceType.GetValue() == HEAD_SURFACE)
 			Enemy->ReceiveDamage(3 * DamageDone);
 		else
 			Enemy->ReceiveDamage(DamageDone);

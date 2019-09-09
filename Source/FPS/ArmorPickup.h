@@ -13,13 +13,16 @@ class FPS_API AArmorPickup : public APickup
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 ArmorAmount;
-
 public:
 
 	AArmorPickup(const FObjectInitializer& ObjectInitializer);
-
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
+
+private:
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+		int32 ArmorAmount;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	bool bCanBoostMaxArmor;
 	
 };

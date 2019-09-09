@@ -7,6 +7,7 @@
 AHealthPickup::AHealthPickup(const FObjectInitializer& ObjectInitializer)
 {
 	HealAmount = 25.0f;
+	PickupType = EPickupType::Health;
 }
 
 bool AHealthPickup::TryApplyToCharacter(AFPSCharacter* Character)

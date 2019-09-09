@@ -14,13 +14,15 @@ class FPS_API AAmmoPickup : public APickup
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 AmountOfMagazinesToAdd;	
-
 public:
-	
+
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 
 	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType;
+
+private:
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	int32 AmountOfMagazinesToAdd;	
 };

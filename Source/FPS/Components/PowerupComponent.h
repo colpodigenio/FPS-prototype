@@ -14,6 +14,20 @@ class FPS_API UPowerupComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:
+
+	UPowerupComponent();
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void EnablePowerup(EPowerupType PowerupType);
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsPowerupEnabled() const { return bIsPowerupEnabled; };
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+
 	void EnableSpeedBoost();
 	void EnableDamageBoost();
 	void EnableRegeneration();
@@ -25,17 +39,5 @@ class FPS_API UPowerupComponent : public UActorComponent
 	float DamageBoostDuration;
 	int32 RegenerationDuration;
 	TWeakObjectPtr<AFPSCharacter> OwningCharacterRef;
-	FTimerHandle PowerupTimer;
-
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-	UPowerupComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	void EnablePowerup(EPowerupType PowerupType);
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsPowerupEnabled() const { return bIsPowerupEnabled; };
-	
+	FTimerHandle PowerupTimer;	
 };

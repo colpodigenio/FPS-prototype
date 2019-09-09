@@ -14,12 +14,14 @@ class FPS_API APowerupPickup : public APickup
 {
 	GENERATED_BODY()
 
+public:
+	APowerupPickup();
+	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
+
+private:
+
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	EPowerupType PowerupType;
 
 	void ApplyPowerup(AFPSCharacter* Character, EPowerupType PowerupType);
-
-public:
-	APowerupPickup();
-	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 };

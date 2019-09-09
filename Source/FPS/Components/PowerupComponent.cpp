@@ -12,7 +12,7 @@ UPowerupComponent::UPowerupComponent()
 	bIsPowerupEnabled = false;
 	SpeedBoostDuration = 10.0f;
 	DamageBoostDuration = 10.0f;
-	RegenerationDuration = 10;
+	RegenerationDuration = 50;
 }
 
 void UPowerupComponent::BeginPlay()

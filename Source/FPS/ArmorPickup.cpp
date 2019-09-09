@@ -7,6 +7,8 @@
 AArmorPickup::AArmorPickup(const FObjectInitializer& ObjectInitializer)
 {
 	ArmorAmount = 25.0f;
+	PickupType = EPickupType::Armor;
+	bCanBoostMaxArmor = false;
 }
 
 bool AArmorPickup::TryApplyToCharacter(AFPSCharacter* Character)
@@ -16,7 +18,7 @@ bool AArmorPickup::TryApplyToCharacter(AFPSCharacter* Character)
 		return false;
 	else
 	{
-		Character->GetHealthComponent()->AddArmor(ArmorAmount);
+		Character->GetHealthComponent()->AddArmor(ArmorAmount, bCanBoostMaxArmor);
 		return true;
 	}
 }

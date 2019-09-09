@@ -4,7 +4,7 @@
 #include "FPSCharacter.h"
 
 UHealthComponent::UHealthComponent()
-	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(200), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
+	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(100), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
 
 void UHealthComponent::ApplyHeal(int32 HealDelta)
 {
@@ -18,12 +18,12 @@ void UHealthComponent::ApplyHeal(int32 HealDelta)
 	}
 }
 
-void UHealthComponent::AddArmor(int32 ArmorDelta)
+void UHealthComponent::AddArmor(int32 ArmorDelta, bool CanBoostMaxArmor)
 {
 	if (Health > 0)
 	{
 		int32 NewArmor = Armor + ArmorDelta;
-		if (NewArmor >= ArmorMax)
+		if (NewArmor >= ArmorMax && !CanBoostMaxArmor)
 			Armor = ArmorMax;
 		else
 			Armor = NewArmor;
