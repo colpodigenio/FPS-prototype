@@ -9,6 +9,7 @@
 #include "Pickup.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Weapon.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UBTS_FindPickupToTake::UBTS_FindPickupToTake()
 {
@@ -17,6 +18,7 @@ UBTS_FindPickupToTake::UBTS_FindPickupToTake()
 	bIsPickupMemoryTimerRun = false;
 	MemoryDuration = 20;
 	RangeOfVision = 10000.0f;
+	VisionHalfAngle = 50;
 }
 
 void UBTS_FindPickupToTake::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -33,9 +35,9 @@ void UBTS_FindPickupToTake::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 
 	if (!OwnerPawn.Get() || !Blackboard.Get()) return;
 
-	TArray<FHitResult> VisibleActors = GetAllVisibleActorsExceptCharacters();
-
-	AddVisiblePickupsToKnown(VisibleActors);
+	//TArray<FHitResult> VisibleActors = GetAllVisibleActorsExceptCharacters();
+	
+	AddVisiblePickupsToKnown(GetAllVisiblePickups());
 	SetTargetPickup();
 	
 	if (TargetPickup)
@@ -48,31 +50,35 @@ void UBTS_FindPickupToTake::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 	}
 }
 
-TArray<FHitResult> UBTS_FindPickupToTake::GetAllVisibleActorsExceptCharacters()
+
+TArray<APickup*> UBTS_FindPickupToTake::GetAllVisiblePickups()
 {
-	FVector StartPoint = OwnerPawn->GetActorLocation();
-	FVector EndPoint = StartPoint + RangeOfVision * OwnerPawn->GetActorForwardVector();
-	TArray<FHitResult> VisibleActors;
-	FCollisionQueryParams CollisionQueryParams;
-	TArray<AActor*> AllCharacters;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFPSCharacter::StaticClass(), AllCharacters);
-	CollisionQueryParams.AddIgnoredActors(AllCharacters);
-	GetWorld()->SweepMultiByChannel(VisibleActors, StartPoint, EndPoint, FQuat::Identity, PICKUP_TRACE, FCollisionShape::MakeBox(FVector(50.0f, 400.0f, 100.0f)), CollisionQueryParams);
-	return VisibleActors;
+	TArray<AActor*> AllPickups;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickup::StaticClass(), AllPickups);
+	TArray<APickup*> VisiblePickups;
+	FVector BotForwardVector = OwnerPawn->GetActorForwardVector();
+	for (AActor* Pickup : AllPickups)
+	{
+		FVector BotVectorToPickup = (Pickup->GetActorLocation() - OwnerPawn->GetActorLocation()).GetSafeNormal();
+		float PickupAngle = UKismetMathLibrary::DegAcos(FVector::DotProduct(BotForwardVector, BotVectorToPickup)); // angle between pickup's position and bot's forward vector
+		float DistanceToPickup = (Pickup->GetActorLocation() - OwnerPawn->GetActorLocation()).Size();
+		if (PickupAngle <= VisionHalfAngle && DistanceToPickup <= RangeOfVision && Cast<APickup>(Pickup)->IsPickupActive())
+			VisiblePickups.Emplace(Cast<APickup>(Pickup));
+	}
+	return VisiblePickups;
 }
 
-void UBTS_FindPickupToTake::AddVisiblePickupsToKnown(TArray<FHitResult> VisibleActors)
+void UBTS_FindPickupToTake::AddVisiblePickupsToKnown(TArray<APickup*> VisiblePickups)
 {
-	for (auto& Element : VisibleActors)
+	for (APickup* Pickup : VisiblePickups)
 	{
-		APickup* Pickup = Cast<APickup>(Element.GetActor());
-		if (!Pickup) continue;
 		FHitResult HitRes;
 		FVector StartPoint = OwnerPawn->GetActorLocation();
 		FVector EndPoint = Pickup->GetActorLocation();
+		float DistanceToPickup = (StartPoint - EndPoint).Size();
 		if (!GetWorld()->LineTraceSingleByChannel(HitRes, StartPoint, EndPoint, ECC_Visibility))
 		{
-			FPickupData PickupData = FPickupData(Pickup, Pickup->IsPickupActive(), Element.Distance, MemoryDuration);
+			FPickupData PickupData = FPickupData(Pickup, DistanceToPickup, MemoryDuration);
 			KnownPickups.Add(Pickup->PickupID, PickupData);
 		}
 	}
@@ -116,7 +122,7 @@ void UBTS_FindPickupToTake::SetTargetPickup()
 void UBTS_FindPickupToTake::CalculateNeedValueAndSetTargetPickup(FPickupData PickupData, float &LastPickupValue, float NeedRatio)
 {
 	float PickupValue;
-	PickupValue = (RangeOfVision / PickupData.DistanceToPickup) * static_cast<float>(PickupData.bIsPickupActive) * NeedRatio * PickupData.PickupRef->GetPickupValue();
+	PickupValue = (RangeOfVision / PickupData.DistanceToPickup) * static_cast<float>(PickupData.PickupRef->IsPickupActive()) * NeedRatio * PickupData.PickupRef->GetPickupValue();
 	UE_LOG(LogTemp, Warning, TEXT("%s --- %f ^^^ LastPickup --- %f"), *PickupData.PickupRef->GetName(), PickupValue, LastPickupValue)
 	if (PickupValue > LastPickupValue)
 	{
@@ -149,7 +155,7 @@ void UBTS_FindPickupToTake::CyclePickupMemoryTimer()
 	{
 		Element.MemoryDuration--;
 		KnownPickups.Add(Element.PickupRef->PickupID, Element);
-		if (Element.MemoryDuration <= 0 || !Element.bIsPickupActive)
+		if (Element.MemoryDuration <= 0 || !Element.PickupRef->IsPickupActive())
 			KnownPickups.Remove(Element.PickupRef->PickupID);
 	}
 	FTimerHandle MemoryTimer;

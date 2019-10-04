@@ -42,6 +42,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; };
 	FORCEINLINE int32 GetDamageBooster() const { return DamageBooster; };
+	bool CheckIfAmmoRanOut();
 
 protected:
 

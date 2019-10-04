@@ -24,13 +24,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	AssaultRifleAmmoNeedRatio;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	ShotgunAmmoNeedRatio;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	RocketLauncherAmmoNeedRatio;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	AssaultRifleNeedRatio;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector	ShotgunAmmoNeedRatio;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	ShotgunNeedRatio;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector	RocketLauncherAmmoNeedRatio;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	RocketLauncherNeedRatio;
 	UPROPERTY(EditAnywhere, Category = Blackboard)

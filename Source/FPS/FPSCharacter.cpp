@@ -294,6 +294,21 @@ bool AFPSCharacter::CheckiIfArmorIsFull()
 		return false;
 }
 
+bool AFPSCharacter::CheckiIfAmmoRanOut()
+{
+	bool bIsAssaultRifleEmpty = true, bIsShotgunEmpty = true, bIsRocketLauncherEmpty = true;
+	if(GetWeaponByType(EWeaponType::AssaultRifle))
+		bIsAssaultRifleEmpty = GetWeaponByType(EWeaponType::AssaultRifle)->CheckIfAmmoRanOut();
+	if (GetWeaponByType(EWeaponType::Shotgun))
+		bIsShotgunEmpty = GetWeaponByType(EWeaponType::Shotgun)->CheckIfAmmoRanOut();
+	if (GetWeaponByType(EWeaponType::RocketLauncher))
+		bIsRocketLauncherEmpty = GetWeaponByType(EWeaponType::RocketLauncher)->CheckIfAmmoRanOut();
+	if (bIsAssaultRifleEmpty && bIsShotgunEmpty && bIsRocketLauncherEmpty)
+		return true;
+	else
+		return false;
+}
+
 void AFPSCharacter::EnableDamageBoost()
 {
 	for (auto& Elem : WeaponInventory)

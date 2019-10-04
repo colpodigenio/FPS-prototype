@@ -11,11 +11,10 @@ class APickup;
 
 struct FPickupData
 {
-	FPickupData(APickup* PickupRef, bool IsPickupActive, float DistanceToPickup, int32 MemoryDuration)
-		: PickupRef(PickupRef), bIsPickupActive(IsPickupActive), DistanceToPickup(DistanceToPickup), MemoryDuration(MemoryDuration) {};
+	FPickupData(APickup* PickupRef, float DistanceToPickup, int32 MemoryDuration)
+		: PickupRef(PickupRef), DistanceToPickup(DistanceToPickup), MemoryDuration(MemoryDuration) {};
 
 	APickup* PickupRef;
-	bool bIsPickupActive;
 	float DistanceToPickup;
 	int32 MemoryDuration;
 };
@@ -28,10 +27,6 @@ class FPS_API UBTS_FindPickupToTake : public UBTService
 public:
 
 	UBTS_FindPickupToTake();
-	UPROPERTY(EditAnywhere)
-	int32 MemoryDuration;
-	UPROPERTY(EditAnywhere)
-	float RangeOfVision;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector TargetPickupKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
@@ -41,13 +36,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector AssaultRifleAmmoNeedRatioKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector ShotgunAmmoNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector RocketLauncherAmmoNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	AssaultRifleNeedRatioKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector ShotgunAmmoNeedRatioKey;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	ShotgunNeedRatioKey;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector RocketLauncherAmmoNeedRatioKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector	RocketLauncherNeedRatioKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
@@ -55,8 +50,8 @@ public:
 
 private:
 
-	TArray<FHitResult> GetAllVisibleActorsExceptCharacters();
-	void AddVisiblePickupsToKnown(TArray<FHitResult> VisibleActors);
+	TArray<APickup*> GetAllVisiblePickups();
+	void AddVisiblePickupsToKnown(TArray<APickup*> VisiblePickups);
 	void SetTargetPickup();
 	void CalculateNeedValueAndSetTargetPickup(FPickupData PickupData, float &LastPickupValue, float NeedRatio);
 	void CalculateWeaponNeedValue(FPickupData PickupData, float &LastPickupValue);
@@ -68,6 +63,13 @@ private:
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
 
 	bool bIsPickupMemoryTimerRun;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	int32 MemoryDuration;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float RangeOfVision;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float VisionHalfAngle;
 
 protected:
 

@@ -49,6 +49,8 @@ public:
 	bool CheckIfHealthIsFull();
 	int32 GetArmor() const;
 	bool CheckiIfArmorIsFull();
+	UFUNCTION(BlueprintCallable)
+	bool CheckiIfAmmoRanOut();
 	void EnableDamageBoost();
 	void DisableDamageBoost();
 

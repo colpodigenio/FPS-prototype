@@ -184,6 +184,14 @@ bool AWeapon::CheckIfAmmoIsFull()
 		return false;
 }
 
+bool AWeapon::CheckIfAmmoRanOut()
+{
+	if (AmmoTotal == 0 && AmmoInMagazine == 0)
+		return true;
+	else
+		return false;
+}
+
 void AWeapon::ShowMesh()
 {
 	Super::ShowMesh();
