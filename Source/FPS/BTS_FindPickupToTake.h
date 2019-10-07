@@ -30,37 +30,40 @@ public:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector TargetPickupKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector HealthNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector ArmorNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector AssaultRifleAmmoNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	AssaultRifleNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector ShotgunAmmoNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	ShotgunNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector RocketLauncherAmmoNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	RocketLauncherNeedRatioKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector	PowerupNeedRatioKey;
+	FBlackboardKeySelector ChosenPickupNeedValueKey;
+
 
 private:
 
-	TArray<APickup*> GetAllVisiblePickups();
-	void AddVisiblePickupsToKnown(TArray<APickup*> VisiblePickups);
+	TArray<APickup*> GetAllPickupsInFieldOfView();
+	void FilterVisiblePickups(TArray<APickup*> PickupsInFOV);
 	void SetTargetPickup();
-	void CalculateNeedValueAndSetTargetPickup(FPickupData PickupData, float &LastPickupValue, float NeedRatio);
-	void CalculateWeaponNeedValue(FPickupData PickupData, float &LastPickupValue);
+	void CalculateNeedValueAndSetTargetPickup(FPickupData PickupData, float NeedRatio);
+	void CalculateWeaponNeedValue(FPickupData PickupData);
 	void CyclePickupMemoryTimer();
+	void CalculateNeeds();
+	void CalculateHealthNeed();
+	void CalculateArmorNeed();
+	void CalculateAssaultRifleAmmoAndWeaponNeed();
+	void CalculateShotgunAmmoAndWeaponNeed();
+	void CalculateRocketLauncherAmmoAndWeaponNeed();
+	void CalculatePowerupNeed();
 
 	TMap<int32, FPickupData> KnownPickups;
 	APickup* TargetPickup;
 	TWeakObjectPtr<AFPSCharacter> OwnerPawn;
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
+
+	float ChosenPickupNeedValue;
+	float HealthNeedRatio;
+	float ArmorNeedRatio;
+	float AssaultRifleAmmoNeedRatio;
+	float AssaultRifleNeedRatio;
+	float ShotgunAmmoNeedRatio;
+	float ShotgunNeedRatio;
+	float RocketLauncherAmmoNeedRatio;
+	float RocketLauncherNeedRatio;
+	float PowerupNeedRatio;
 
 	bool bIsPickupMemoryTimerRun;
 

@@ -268,6 +268,21 @@ void AFPSCharacter::TakeRocketLauncher()
 	}
 }
 
+bool AFPSCharacter::CheckIfAssaultRifleIsEmpty()
+{
+	return GetWeaponByType(EWeaponType::AssaultRifle)->CheckIfAmmoRanOut();
+}
+
+bool AFPSCharacter::CheckIfShotgunIsEmpty()
+{
+	return GetWeaponByType(EWeaponType::Shotgun)->CheckIfAmmoRanOut();
+}
+
+bool AFPSCharacter::CheckIfRocketLauncherIsEmpty()
+{
+	return GetWeaponByType(EWeaponType::RocketLauncher)->CheckIfAmmoRanOut();
+}
+
 int32 AFPSCharacter::GetHealth() const
 {
 	return HealthComponent->GetHealth();
@@ -336,7 +351,6 @@ void AFPSCharacter::ReceiveDamage(int32 DamageAmount)
 
 bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeaponType WeaponType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("CheckIfCharacterHasWeapon"))
 	if (WeaponInventory.FindRef(WeaponType))
 		return true;
 	else
@@ -347,12 +361,10 @@ void AFPSCharacter::AddAmmoFromWeaponPickup(EWeaponType WeaponType)
 {
 	int32 AmountOfMagazinesToAdd = 2;
 	WeaponInventory.FindRef(WeaponType)->AddAmmo(AmountOfMagazinesToAdd);
-	UE_LOG(LogTemp, Warning, TEXT("AddAmmoFromWeaponPickup"))
 }
 
 void AFPSCharacter::AddWeaponFromWeaponPickup(EWeaponType WeaponType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AddWeaponFromWeaponPickup"))
 	WeaponInventory.Emplace(WeaponType, SpawnWeaponFromPickup(WeaponType));
 }
 

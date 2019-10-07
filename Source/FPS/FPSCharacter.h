@@ -45,6 +45,7 @@ public:
 	void EnablePowerup(EPowerupType PowerupType);
 	UFUNCTION(BlueprintPure)
 	AWeapon* GetWeaponByType(EWeaponType WeaponType);
+	FORCEINLINE AWeapon* GetCurrentWeapon() const { return CurrentWeapon; };
 	int32 GetHealth() const;
 	bool CheckIfHealthIsFull();
 	int32 GetArmor() const;
@@ -53,8 +54,15 @@ public:
 	bool CheckiIfAmmoRanOut();
 	void EnableDamageBoost();
 	void DisableDamageBoost();
+	void TakeAssaultRifle();
+	void TakeShotgun();
+	void TakeRocketLauncher();
+	bool CheckIfAssaultRifleIsEmpty();
+	bool CheckIfShotgunIsEmpty();
+	bool CheckIfRocketLauncherIsEmpty();
 
 	const float RunningMultiplier = 0.55; // walking is 2 times slower
+
 
 protected:
 
@@ -110,7 +118,4 @@ private:
 	void ReloadWeapon();
 	void UseExplosive();
 	void TakeNewWeapon(EWeaponType NewWeaponType);
-	void TakeAssaultRifle();
-	void TakeShotgun();
-	void TakeRocketLauncher();
 };
