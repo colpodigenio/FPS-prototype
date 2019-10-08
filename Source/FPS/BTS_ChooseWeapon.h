@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
+#include "FPS.h"
 #include "BTS_ChooseWeapon.generated.h"
 
 class AFPSCharacter;
@@ -30,6 +31,7 @@ private:
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
 
 	float FindDistanceToEnemy();
+	void TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeapon, EWeaponType SecondWeapon, EWeaponType ThirdWeapon);
 
 protected:
 

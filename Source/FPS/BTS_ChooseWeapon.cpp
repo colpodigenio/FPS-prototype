@@ -29,23 +29,17 @@ void UBTS_ChooseWeapon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (!OwnerPawn.Get() || !Blackboard.Get()) return;
 	float DistanceToEnemy = FindDistanceToEnemy();
 		
-	if (OwnerPawn->CheckIfCharacterHasWeapon(EWeaponType::AssaultRifle) && !OwnerPawn->CheckIfAssaultRifleIsEmpty() && DistanceToEnemy > MinDistanceToUseAssaultRifle)
-	{
-		OwnerPawn->TakeAssaultRifle();
-	}
-	else if (OwnerPawn->CheckIfCharacterHasWeapon(EWeaponType::RocketLauncher) && !OwnerPawn->CheckIfAssaultRifleIsEmpty() && DistanceToEnemy > MinDistanceToUseRocketLauncher)
-	{
-		OwnerPawn->TakeRocketLauncher();
-	}
-	else if (OwnerPawn->CheckIfCharacterHasWeapon(EWeaponType::Shotgun) && !OwnerPawn->CheckIfAssaultRifleIsEmpty() && DistanceToEnemy <= 400.0f)
-	{
-		OwnerPawn->TakeShotgun();
-	}
+	if (DistanceToEnemy > MinDistanceToUseAssaultRifle)
+		TakeWeaponIfItIsNotEmpty(EWeaponType::AssaultRifle, EWeaponType::RocketLauncher, EWeaponType::Shotgun);
+	else if (DistanceToEnemy > MinDistanceToUseRocketLauncher)
+		TakeWeaponIfItIsNotEmpty(EWeaponType::RocketLauncher, EWeaponType::AssaultRifle, EWeaponType::Shotgun);
+	else if (DistanceToEnemy <= MinDistanceToUseRocketLauncher)
+		TakeWeaponIfItIsNotEmpty(EWeaponType::Shotgun, EWeaponType::RocketLauncher, EWeaponType::AssaultRifle);
 }
 
 float UBTS_ChooseWeapon::FindDistanceToEnemy()
 {
-	static float LastDistanceToEnemy = 1000.0f;
+	static float LastDistanceToEnemy = 2 * MinDistanceToUseAssaultRifle;
 	AFPSCharacter* EnemyToAttack = Cast<AFPSCharacter>(Blackboard->GetValueAsObject(EnemyToAttackKey.SelectedKeyName));
 	if (!EnemyToAttack) return LastDistanceToEnemy;
 	float DistanceToEnemy = (EnemyToAttack->GetActorLocation() - OwnerPawn->GetActorLocation()).Size();
@@ -53,4 +47,13 @@ float UBTS_ChooseWeapon::FindDistanceToEnemy()
 	return DistanceToEnemy;
 }
 
+void UBTS_ChooseWeapon::TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeapon, EWeaponType SecondWeapon, EWeaponType ThirdWeapon)
+{
+	if (OwnerPawn->CheckIfCharacterHasWeapon(FirstWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(FirstWeapon))
+		OwnerPawn->TakeNewWeapon(FirstWeapon);
+	else if (OwnerPawn->CheckIfCharacterHasWeapon(SecondWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(SecondWeapon))
+		OwnerPawn->TakeNewWeapon(SecondWeapon);
+	else if (OwnerPawn->CheckIfCharacterHasWeapon(ThirdWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(ThirdWeapon))
+		OwnerPawn->TakeNewWeapon(ThirdWeapon);
+}
 

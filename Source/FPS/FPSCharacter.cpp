@@ -268,19 +268,9 @@ void AFPSCharacter::TakeRocketLauncher()
 	}
 }
 
-bool AFPSCharacter::CheckIfAssaultRifleIsEmpty()
+bool AFPSCharacter::CheckIfWeaponByTypeIsEmpty(EWeaponType WeaponType)
 {
-	return GetWeaponByType(EWeaponType::AssaultRifle)->CheckIfAmmoRanOut();
-}
-
-bool AFPSCharacter::CheckIfShotgunIsEmpty()
-{
-	return GetWeaponByType(EWeaponType::Shotgun)->CheckIfAmmoRanOut();
-}
-
-bool AFPSCharacter::CheckIfRocketLauncherIsEmpty()
-{
-	return GetWeaponByType(EWeaponType::RocketLauncher)->CheckIfAmmoRanOut();
+	return GetWeaponByType(WeaponType)->CheckIfAmmoRanOut();
 }
 
 int32 AFPSCharacter::GetHealth() const

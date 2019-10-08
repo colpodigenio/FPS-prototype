@@ -54,12 +54,8 @@ public:
 	bool CheckiIfAmmoRanOut();
 	void EnableDamageBoost();
 	void DisableDamageBoost();
-	void TakeAssaultRifle();
-	void TakeShotgun();
-	void TakeRocketLauncher();
-	bool CheckIfAssaultRifleIsEmpty();
-	bool CheckIfShotgunIsEmpty();
-	bool CheckIfRocketLauncherIsEmpty();
+	void TakeNewWeapon(EWeaponType NewWeaponType);
+	bool CheckIfWeaponByTypeIsEmpty(EWeaponType WeaponType);
 
 	const float RunningMultiplier = 0.55; // walking is 2 times slower
 
@@ -117,5 +113,7 @@ private:
 	void Zoom();
 	void ReloadWeapon();
 	void UseExplosive();
-	void TakeNewWeapon(EWeaponType NewWeaponType);
+	void TakeAssaultRifle();
+	void TakeShotgun();
+	void TakeRocketLauncher();
 };
