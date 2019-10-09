@@ -42,8 +42,10 @@ void UBTS_FindPickupToTake::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 	FilterVisiblePickups(GetAllPickupsInFieldOfView());
 	SetTargetPickup();
 	UE_LOG(LogTemp, Warning, TEXT("--------------------"))
-	if (TargetPickup)
+	if (TargetPickup && ChosenPickupNeedValue > 0.0f)
 		Blackboard->SetValueAsObject(TargetPickupKey.SelectedKeyName, TargetPickup);
+	else
+		Blackboard->SetValueAsObject(TargetPickupKey.SelectedKeyName, nullptr);
 	Blackboard->SetValueAsFloat(ChosenPickupNeedValueKey.SelectedKeyName, ChosenPickupNeedValue);
 
 	if (!bIsPickupMemoryTimerRun)

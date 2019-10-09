@@ -19,6 +19,8 @@ public:
 	UBTS_ChooseWeapon();
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector EnemyToAttackKey;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector UsedWeaponKey;
 	UPROPERTY(EditAnywhere, Category = WeaponRanges)
 	float MinDistanceToUseAssaultRifle;
 	UPROPERTY(EditAnywhere, Category = WeaponRanges)

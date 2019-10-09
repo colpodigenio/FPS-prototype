@@ -35,6 +35,7 @@ void UBTS_ChooseWeapon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		TakeWeaponIfItIsNotEmpty(EWeaponType::RocketLauncher, EWeaponType::AssaultRifle, EWeaponType::Shotgun);
 	else if (DistanceToEnemy <= MinDistanceToUseRocketLauncher)
 		TakeWeaponIfItIsNotEmpty(EWeaponType::Shotgun, EWeaponType::RocketLauncher, EWeaponType::AssaultRifle);
+	Blackboard->SetValueAsEnum(UsedWeaponKey.SelectedKeyName, (uint8)OwnerPawn->GetCurrentWeapon()->GetWeaponType());
 }
 
 float UBTS_ChooseWeapon::FindDistanceToEnemy()
