@@ -37,11 +37,6 @@ void AProjectile::BeginPlay()
 	Mesh->OnComponentHit.AddDynamic(this, &AProjectile::HitTarget);
 }
 
-void AProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AProjectile::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
@@ -51,15 +46,9 @@ void AProjectile::OnConstruction(const FTransform& Transform)
 
 void AProjectile::SetProjectileInitialVelocity()
 {
-	ProjectileMovement->Velocity = FindShotDirection();
-}
-
-#include "DrawDebugHelpers.h"
-FVector AProjectile::FindShotDirection()
-{
 	AWeapon* OwningWeapon = Cast<AWeapon>(GetOwner());
 	if (!OwningWeapon)
-		return FVector(0.0f);
+		return;
 
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
@@ -69,9 +58,10 @@ FVector AProjectile::FindShotDirection()
 	FVector DirectionEndPoint;
 	HitResult.bBlockingHit ? DirectionEndPoint = HitResult.ImpactPoint : DirectionEndPoint = HitResult.TraceEnd;
 	FVector ShotDirection = (DirectionEndPoint - DirectionStartPoint).GetSafeNormal();
-	return ShotDirection;
+	ProjectileMovement->Velocity = ShotDirection;
 }
 
+#include "DrawDebugHelpers.h"
 
 void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

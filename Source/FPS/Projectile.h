@@ -17,16 +17,17 @@ class FPS_API AProjectile : public AActor
 
 public:	
 	AProjectile();
-	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 DamageDone;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UProjectileMovementComponent* ProjectileMovement;
 
-	virtual void BeginPlay() override;	
-	virtual FVector FindShotDirection();
+	virtual void BeginPlay() override;
+	virtual void SetProjectileInitialVelocity();
 	UFUNCTION()
 	virtual void HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	void ReportDamageSense(AFPSCharacter* EnemyToReport);
@@ -34,9 +35,5 @@ protected:
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
-
-	void SetProjectileInitialVelocity();
 };

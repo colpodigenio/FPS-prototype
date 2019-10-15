@@ -3,17 +3,19 @@
 #include "ShotgunPellet.h"
 #include "FPSCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Weapon.h"
 
+AShotgunPellet::AShotgunPellet()
+	: Super(){}
 
-
-
-FVector AShotgunPellet::FindShotDirection()
+void AShotgunPellet::SetProjectileInitialVelocity()
 {
 	AWeapon* OwningWeapon = Cast<AWeapon>(GetOwner());
 	if (!OwningWeapon)
-		return FVector(0.0f);
+		return;
+
 	ensureMsgf(OwningWeapon, TEXT("When shooting this projectile you should set the shooting weapon as an owner in FActorSpawnParameters"));
 	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
@@ -26,8 +28,6 @@ FVector AShotgunPellet::FindShotDirection()
 	else
 		DirectionEndPoint = HitResult.TraceEnd;
 	FVector ShotDirection = (DirectionEndPoint - DirectionStartPoint).GetSafeNormal();
-	return ShotDirection;
+	ProjectileMovement->Velocity = ShotDirection;
 }
 
-AShotgunPellet::AShotgunPellet()
-	: Super(){}

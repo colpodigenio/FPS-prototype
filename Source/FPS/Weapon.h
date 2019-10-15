@@ -24,9 +24,11 @@ public:
 
 	FOnTimelineFloat OnRecoilTimelineCallback;
 	FOnTimelineEventStatic OnRecoilTimelineFinish;
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Fire"))
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void Aim();
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Reload"))
 	virtual void StartReload();
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;
 	void AddAmmo(int32 AmountOfMagazines);
@@ -52,13 +54,13 @@ protected:
 	int32 AmmoMagazineCapacity;
 	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoTotal; // ammo excluding ammo in magazine 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	int32 AmmoInMagazine;
 	int32 DamageAmount;
 	int32 DefaultDamage;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 DamageBooster;
-	float FireRate; // shots in second
+	float FireRate; // shots amount in second
 	float ReloadTime; // seconds
 	float LastShotTime;
 	float RecoilValue;

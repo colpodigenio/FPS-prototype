@@ -24,9 +24,9 @@ void UBTS_ChooseWeapon::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint
 
 void UBTS_ChooseWeapon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds); // needed because first tick starts before OnBecomeRelevant
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds); 
 
-	if (!OwnerPawn.Get() || !Blackboard.Get()) return;
+	if (!OwnerPawn.Get() || !Blackboard.Get()) return; // needed because first tick starts before OnBecomeRelevant
 	float DistanceToEnemy = FindDistanceToEnemy();
 		
 	if (DistanceToEnemy > MinDistanceToUseAssaultRifle)

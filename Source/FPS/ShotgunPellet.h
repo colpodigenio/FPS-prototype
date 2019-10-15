@@ -17,5 +17,5 @@ class FPS_API AShotgunPellet : public AProjectile
 public:
 	AShotgunPellet();
 private:
-	virtual FVector FindShotDirection() override;
+	virtual void SetProjectileInitialVelocity() override;
 };

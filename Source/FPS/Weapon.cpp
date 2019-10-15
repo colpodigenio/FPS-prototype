@@ -59,7 +59,6 @@ void AWeapon::StartFire()
 		ShotDelay = FMath::Max(1 / FireRate - (GetWorld()->TimeSeconds - LastShotTime), 0.0f);
 	else
 		ShotDelay = 0.0f;
-	UE_LOG(LogTemp, Warning, TEXT("%f"), ShotDelay)
 	bFirstShotFired = true;
 	GetWorldTimerManager().SetTimer(FireTimer, this, &AWeapon::Fire, 1 / FireRate, true, ShotDelay);
 }
@@ -75,12 +74,6 @@ void AWeapon::RecoilTimelineFinish()
 {
 }
 
-void AWeapon::AddRecoil()
-{
-	if (WeaponTimeline)
-		WeaponTimeline->PlayFromStart();
-}
-
 void AWeapon::Fire()
 {
 	LastShotTime = GetWorld()->TimeSeconds;
@@ -94,8 +87,15 @@ void AWeapon::Fire()
 	UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
 }
 
+void AWeapon::AddRecoil()
+{
+	if (WeaponTimeline)
+		WeaponTimeline->PlayFromStart();
+}
+
 void AWeapon::ShotProjectile()
 {
+	// if (GetOwner()->GetController.GetClass() == APlayerController::StaticClass())
 	UE_LOG(LogTemp, Warning, TEXT("%i"), DamageAmount)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

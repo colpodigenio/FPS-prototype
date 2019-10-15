@@ -4,6 +4,7 @@
 #include "BehaviorTree/BTService.h"
 #include "BTS_FindEnemyToAttack.generated.h"
 
+class AAIController;
 class AFPSCharacter;
 class APickup;
 
@@ -24,11 +25,14 @@ private:
 
 	TArray<AFPSCharacter*> GetAllVisibleEnemiesInFieldOfView();
 	void SetEnemyToAttackOrLastSeenLocation();
+	void FocusOnEnemyOrClear();
 	AFPSCharacter* FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV);
 
 	APickup* TargetPickup;
+	TWeakObjectPtr<AAIController> OwnerController;
 	TWeakObjectPtr<AFPSCharacter> OwnerPawn;
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
+	TWeakObjectPtr<AFPSCharacter> EnemyToAttack;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float RangeOfVision;
