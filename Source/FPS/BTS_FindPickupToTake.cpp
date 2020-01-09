@@ -41,7 +41,7 @@ void UBTS_FindPickupToTake::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 	CalculateNeeds();
 	FilterVisiblePickups(GetAllPickupsInFieldOfView());
 	SetTargetPickup();
-	UE_LOG(LogTemp, Warning, TEXT("--------------------"))
+	//UE_LOG(LogTemp, Warning, TEXT("--------------------"))
 	if (TargetPickup && ChosenPickupNeedValue > 0.0f)
 		Blackboard->SetValueAsObject(TargetPickupKey.SelectedKeyName, TargetPickup);
 	else
@@ -129,7 +129,7 @@ void UBTS_FindPickupToTake::CalculateNeedValueAndSetTargetPickup(FPickupData Pic
 {
 	float PickupValue;
 	PickupValue = (RangeOfVision / PickupData.DistanceToPickup) * static_cast<float>(PickupData.PickupRef->IsPickupActive()) * NeedRatio * PickupData.PickupRef->GetPickupValue();
-	UE_LOG(LogTemp, Warning, TEXT("%s --- %f ^^^ ChosenPickupNeedRatio --- %f"), *PickupData.PickupRef->GetName(), PickupValue, ChosenPickupNeedValue)
+	//UE_LOG(LogTemp, Warning, TEXT("%s --- %f ^^^ ChosenPickupNeedRatio --- %f"), *PickupData.PickupRef->GetName(), PickupValue, ChosenPickupNeedValue)
 	if (PickupValue > ChosenPickupNeedValue)
 	{
 		ChosenPickupNeedValue = PickupValue;

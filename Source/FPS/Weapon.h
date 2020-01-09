@@ -61,6 +61,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 DamageBooster;
 	float FireRate; // shots amount in second
+	UPROPERTY(BlueprintReadOnly)
 	float ReloadTime; // seconds
 	float LastShotTime;
 	float RecoilValue;

@@ -26,7 +26,7 @@ private:
 	TArray<AFPSCharacter*> GetAllVisibleEnemiesInFieldOfView();
 	void SetEnemyToAttackOrLastSeenLocation();
 	void FocusOnEnemyOrClear();
-	AFPSCharacter* FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV);
+	void FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV);
 
 	APickup* TargetPickup;
 	TWeakObjectPtr<AAIController> OwnerController;
@@ -38,6 +38,8 @@ private:
 	float RangeOfVision;
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float VisionHalfAngle;
+	bool bIsMemoryTimerStarted;
+	float MemoryTime;
 	FVector LastSeenEnemyLocation;
 
 protected:

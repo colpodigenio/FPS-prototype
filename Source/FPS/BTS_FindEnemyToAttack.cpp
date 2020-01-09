@@ -9,6 +9,15 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
+
+static int32 DebugConeDraw = 0;
+FAutoConsoleVariableRef CVARDDrawDebugCone(
+	TEXT("Draw.Debug"),
+	DebugConeDraw,
+	TEXT("Draws cone from bot to show where it looks."),
+	ECVF_Cheat
+);
 
 UBTS_FindEnemyToAttack::UBTS_FindEnemyToAttack()
 {
@@ -16,6 +25,8 @@ UBTS_FindEnemyToAttack::UBTS_FindEnemyToAttack()
 	bCallTickOnSearchStart = true;
 	RangeOfVision = 10000.0f;
 	VisionHalfAngle = 50;
+	bIsMemoryTimerStarted = false;
+	MemoryTime = 3.0f;
 }
 
 void UBTS_FindEnemyToAttack::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -35,6 +46,15 @@ void UBTS_FindEnemyToAttack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	SetEnemyToAttackOrLastSeenLocation();
 	FocusOnEnemyOrClear();
+	if (bIsMemoryTimerStarted)
+		MemoryTime -= DeltaSeconds;
+	else
+		MemoryTime = 3.0f;
+	UE_LOG(LogTemp, Warning, TEXT("%i enemies in FOV"), GetAllVisibleEnemiesInFieldOfView().Num())
+	for (auto It : GetAllVisibleEnemiesInFieldOfView())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("%s"), *It->GetName())
+	}
 }
 
 
@@ -54,18 +74,18 @@ void UBTS_FindEnemyToAttack::FocusOnEnemyOrClear()
 		OwnerController->ClearFocus(EAIFocusPriority::Gameplay);
 }
 
-AFPSCharacter* UBTS_FindEnemyToAttack::FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV)
+void UBTS_FindEnemyToAttack::FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV)
 {
-	EnemyToAttack = nullptr;
-	float DistanceToTargetEnemy = RangeOfVision;
-	for (AFPSCharacter* Enemy : EnemiesInFOV)
+	if (EnemiesInFOV.Num() > 0)
 	{
-		FHitResult HitRes;
-		FVector StartPoint = OwnerPawn->GetActorLocation();
-		FVector EndPoint = Enemy->GetActorLocation();
-		float DistanceToEnemy = (StartPoint - EndPoint).Size();
-		if (!GetWorld()->LineTraceSingleByChannel(HitRes, StartPoint, EndPoint, ECC_Visibility))
+		bIsMemoryTimerStarted = false;
+		EnemyToAttack = nullptr;
+		float DistanceToTargetEnemy = RangeOfVision;
+		for (AFPSCharacter* Enemy : EnemiesInFOV)
 		{
+			FVector StartPoint = OwnerPawn->GetActorLocation();
+			FVector EndPoint = Enemy->GetActorLocation();
+			float DistanceToEnemy = (StartPoint - EndPoint).Size();
 			if (DistanceToEnemy < DistanceToTargetEnemy)
 			{
 				DistanceToTargetEnemy = DistanceToEnemy;
@@ -73,9 +93,17 @@ AFPSCharacter* UBTS_FindEnemyToAttack::FilterClosestVisibleEnemy(TArray<AFPSChar
 				EnemyToAttack = Enemy;
 			}
 		}
+		DistanceToTargetEnemy = RangeOfVision;
 	}
-	DistanceToTargetEnemy = RangeOfVision;
-	return EnemyToAttack.Get();
+	else
+	{
+		if (EnemyToAttack.Get())
+		{
+			bIsMemoryTimerStarted = true;
+			if (MemoryTime <= 0.f)
+				EnemyToAttack = nullptr;
+		}
+	}
 }
 
 TArray<AFPSCharacter*> UBTS_FindEnemyToAttack::GetAllVisibleEnemiesInFieldOfView()
@@ -89,8 +117,14 @@ TArray<AFPSCharacter*> UBTS_FindEnemyToAttack::GetAllVisibleEnemiesInFieldOfView
 		FVector BotVectorToEnemy = (Enemy->GetActorLocation() - OwnerPawn->GetActorLocation()).GetSafeNormal();
 		float AngleToEnemy = UKismetMathLibrary::DegAcos(FVector::DotProduct(BotForwardVector, BotVectorToEnemy));
 		float DistanceToEnemy = (Enemy->GetActorLocation() - OwnerPawn->GetActorLocation()).Size();
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(OwnerPawn.Get());
+		if(GetWorld()->LineTraceSingleByChannel(HitResult, OwnerPawn->GetActorLocation(), Enemy->GetActorLocation(), ECC_Camera, QueryParams))
+		DrawDebugLine(GetWorld(), OwnerPawn->GetActorLocation(), HitResult.ImpactPoint, FColor::Purple, false, 5.f);
 		if (AngleToEnemy <= VisionHalfAngle && DistanceToEnemy <= RangeOfVision)
-			EnemiesInFOV.Emplace(Cast<AFPSCharacter>(Enemy));
+			if(Cast<AFPSCharacter>(HitResult.GetActor()))
+				EnemiesInFOV.Emplace(Cast<AFPSCharacter>(Enemy));
 	}
 	return EnemiesInFOV;
 }
