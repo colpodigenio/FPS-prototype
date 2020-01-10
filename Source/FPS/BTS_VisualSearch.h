@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
-#include "BTS_FindPickupToTake.generated.h"
+#include "BTS_VisualSearch.generated.h"
 
 class AFPSCharacter;
 class APickup;
@@ -20,20 +20,34 @@ struct FPickupData
 };
 
 UCLASS()
-class FPS_API UBTS_FindPickupToTake : public UBTService
+class FPS_API UBTS_VisualSearch : public UBTService
 {
 	GENERATED_BODY()
-
+	
 public:
 
-	UBTS_FindPickupToTake();
+	UBTS_VisualSearch();
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector EnemyToAttackKey;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector LastSeenEnemyKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector TargetPickupKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector ChosenPickupNeedValueKey;
 
+protected:
+
+	void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
+
+	TArray<AFPSCharacter*> GetAllVisibleEnemiesInFieldOfView();
+	void SetEnemyToAttack();
+	void FocusOnEnemyOrClear();
+	void FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV);
 
 	TArray<APickup*> GetAllPickupsInFieldOfView();
 	void FilterVisiblePickups(TArray<APickup*> PickupsInFOV);
@@ -49,10 +63,20 @@ private:
 	void CalculateRocketLauncherAmmoAndWeaponNeed();
 	void CalculatePowerupNeed();
 
-	TMap<int32, FPickupData> KnownPickups;
-	APickup* TargetPickup;
+
+	TWeakObjectPtr<AAIController> OwnerController;
 	TWeakObjectPtr<AFPSCharacter> OwnerPawn;
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
+	TWeakObjectPtr<AFPSCharacter> EnemyToAttack;
+	TWeakObjectPtr<AFPSCharacter> LastSeenEnemy;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float RangeOfVision;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float VisionHalfAngle;
+	
+	TMap<int32, FPickupData> KnownPickups;
+	TWeakObjectPtr<APickup> TargetPickup;
 
 	float ChosenPickupNeedValue;
 	float HealthNeedRatio;
@@ -64,18 +88,11 @@ private:
 	float RocketLauncherAmmoNeedRatio;
 	float RocketLauncherNeedRatio;
 	float PowerupNeedRatio;
+	float DefaultEnemyMemoryTime;
+	float EnemyMemoryTime;
 
 	bool bIsPickupMemoryTimerRun;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	int32 MemoryDuration;
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float RangeOfVision;
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float VisionHalfAngle;
-
-protected:
-
-	void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	int32 PickupMemoryDuration;
 };

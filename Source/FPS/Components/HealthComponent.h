@@ -41,8 +41,10 @@ private:
 
 	int32 HealthMax;
 	int32 HealthMaxBoosted;
+	UPROPERTY(VisibleAnywhere)
 	int32 Health;
 	int32 ArmorMax;
+	UPROPERTY(VisibleAnywhere)
 	int32 Armor;
 	bool bIsDead;
 	bool bIsRegenerating;
