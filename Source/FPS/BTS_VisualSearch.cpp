@@ -20,6 +20,8 @@ UBTS_VisualSearch::UBTS_VisualSearch()
 	RangeOfVision = 10000.0f;
 	VisionHalfAngle = 50;
 	ChosenPickupNeedValue = 0.0f;
+	float DefaultEnemyMemoryTime = 5.0f;
+	float EnemyMemoryTime = 5.0f;
 }
 
 void UBTS_VisualSearch::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -37,8 +39,20 @@ void UBTS_VisualSearch::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	if (!OwnerPawn.Get() || !Blackboard.Get()) return; // it is needed because first tick starts before OnBecomeRelevant
 
-	SetEnemyToAttackOrLastSeenLocation();
+	SetEnemyToAttack();
 	FocusOnEnemyOrClear();
+
+	if (!EnemyToAttack.Get())
+	{
+		EnemyMemoryTime -= DeltaSeconds;
+		if (EnemyMemoryTime <= 0)
+		{
+			LastSeenEnemy = nullptr;
+			EnemyMemoryTime = DefaultEnemyMemoryTime;
+		}
+	}
+	else
+		EnemyMemoryTime = DefaultEnemyMemoryTime;
 
 	ChosenPickupNeedValue = 0.0f;
 
@@ -75,11 +89,11 @@ TArray<AFPSCharacter*> UBTS_VisualSearch::GetAllVisibleEnemiesInFieldOfView()
 	return EnemiesInFOV;
 }
 
-void UBTS_VisualSearch::SetEnemyToAttackOrLastSeenLocation()
+void UBTS_VisualSearch::SetEnemyToAttack()
 {
 	FilterClosestVisibleEnemy(GetAllVisibleEnemiesInFieldOfView());
 	Blackboard->SetValueAsObject(EnemyToAttackKey.SelectedKeyName, EnemyToAttack.Get());
-	Blackboard->SetValueAsVector(LastSeenEnemyLocationKey.SelectedKeyName, LastSeenEnemyLocation);
+	Blackboard->SetValueAsObject(LastSeenEnemyKey.SelectedKeyName, LastSeenEnemy.Get());
 }
 
 void UBTS_VisualSearch::FocusOnEnemyOrClear()
@@ -100,13 +114,13 @@ void UBTS_VisualSearch::FilterClosestVisibleEnemy(TArray<AFPSCharacter*> Enemies
 		FVector StartPoint = OwnerPawn->GetActorLocation();
 		FVector EndPoint = Enemy->GetActorLocation();
 		float DistanceToEnemy = (StartPoint - EndPoint).Size();
-		if (!GetWorld()->LineTraceSingleByChannel(HitRes, StartPoint, EndPoint, ECC_Visibility))
+		if (!GetWorld()->LineTraceSingleByChannel(HitRes, StartPoint, EndPoint, ECC_Visibility)) // checks if there is something between bot and enemy
 		{
 			if (DistanceToEnemy < DistanceToTargetEnemy)
 			{
 				DistanceToTargetEnemy = DistanceToEnemy;
-				LastSeenEnemyLocation = Enemy->GetActorLocation();
 				EnemyToAttack = Enemy;
+				LastSeenEnemy = Enemy;
 			}
 		}
 	}

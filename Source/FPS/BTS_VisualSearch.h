@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector EnemyToAttackKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector LastSeenEnemyLocationKey;
+	FBlackboardKeySelector LastSeenEnemyKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector TargetPickupKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
@@ -45,7 +45,7 @@ protected:
 private:
 
 	TArray<AFPSCharacter*> GetAllVisibleEnemiesInFieldOfView();
-	void SetEnemyToAttackOrLastSeenLocation();
+	void SetEnemyToAttack();
 	void FocusOnEnemyOrClear();
 	void FilterClosestVisibleEnemy(TArray<AFPSCharacter*> EnemiesInFOV);
 
@@ -68,12 +68,12 @@ private:
 	TWeakObjectPtr<AFPSCharacter> OwnerPawn;
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
 	TWeakObjectPtr<AFPSCharacter> EnemyToAttack;
+	TWeakObjectPtr<AFPSCharacter> LastSeenEnemy;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float RangeOfVision;
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float VisionHalfAngle;
-	FVector LastSeenEnemyLocation;
 	
 	TMap<int32, FPickupData> KnownPickups;
 	TWeakObjectPtr<APickup> TargetPickup;
@@ -88,6 +88,8 @@ private:
 	float RocketLauncherAmmoNeedRatio;
 	float RocketLauncherNeedRatio;
 	float PowerupNeedRatio;
+	float DefaultEnemyMemoryTime;
+	float EnemyMemoryTime;
 
 	bool bIsPickupMemoryTimerRun;
 
