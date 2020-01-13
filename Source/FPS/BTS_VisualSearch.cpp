@@ -2,6 +2,7 @@
 
 #include "BTS_VisualSearch.h"
 #include "AIController.h"
+#include "FPS.h"
 #include "Kismet/GameplayStatics.h"
 #include "FPSCharacter.h"
 #include "WorldCollision.h"
@@ -20,8 +21,8 @@ UBTS_VisualSearch::UBTS_VisualSearch()
 	RangeOfVision = 10000.0f;
 	VisionHalfAngle = 50;
 	ChosenPickupNeedValue = 0.0f;
-	float DefaultEnemyMemoryTime = 5.0f;
-	float EnemyMemoryTime = 5.0f;
+	DefaultEnemyMemoryTime = 3.0f;
+	EnemyMemoryTime = 3.0f;
 }
 
 void UBTS_VisualSearch::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -59,6 +60,8 @@ void UBTS_VisualSearch::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	CalculateNeeds();
 	FilterVisiblePickups(GetAllPickupsInFieldOfView());
 	SetTargetPickup();
+	//UE_LOG(LogTemp, Warning, TEXT("%s | %f"), *this->GetName(), ChosenPickupNeedValue)
+	PRINT("%s | %f", *this->GetName(), ChosenPickupNeedValue)
 
 	if (TargetPickup.Get() && ChosenPickupNeedValue > 0.0f)
 		Blackboard->SetValueAsObject(TargetPickupKey.SelectedKeyName, TargetPickup.Get());

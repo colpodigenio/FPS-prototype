@@ -84,7 +84,7 @@ void AWeapon::Fire()
 	if (ShotSoundEffect)
 		ShotSoundEffect->Activate(true);
 	DecreaseAmmoAmount();
-	UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
+	//UE_LOG(LogTemp, Warning, TEXT("%s has fired, ammo in magazine %i"), *GetName(), AmmoInMagazine)
 }
 
 void AWeapon::AddRecoil()
@@ -96,7 +96,7 @@ void AWeapon::AddRecoil()
 void AWeapon::ShotProjectile()
 {
 	// if (GetOwner()->GetController.GetClass() == APlayerController::StaticClass())
-	UE_LOG(LogTemp, Warning, TEXT("%i"), DamageAmount)
+	//UE_LOG(LogTemp, Warning, TEXT("%s | %i"), *this->GetName(), DamageAmount)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;

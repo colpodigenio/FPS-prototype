@@ -13,6 +13,7 @@
 #define PROJECTILE_OBJ ECC_GameTraceChannel3
 #define PICKUP_TRACE ECC_GameTraceChannel4
 
+#define PRINT(x, ...) UE_LOG(LogTemp, Warning, TEXT(x), __VA_ARGS__ )
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8

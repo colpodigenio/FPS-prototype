@@ -133,10 +133,10 @@ void AFPSCharacter::NormalizeMoveStrafeVector(float &Multiplier)
 
 void AFPSCharacter::TryJump()
 {
-	if (Stamina > 0.25)
+	if (Stamina > 0.5)
 	{
 		Jump();
-		Stamina -= 0.25;
+		Stamina -= 0.5;
 	}
 }
 
@@ -174,9 +174,9 @@ void AFPSCharacter::RestoreStamina(float DeltaTime)
 	if (!bIsSprinting && !GetCharacterMovement()->IsFalling() && Stamina < StaminaMax)
 	{
 		if (bIsRunning)
-			Stamina += DeltaTime;
+			Stamina += DeltaTime / 4.0f;
 		else
-			Stamina += 2 * DeltaTime;
+			Stamina += DeltaTime / 2.0f;
 		if (Stamina > StaminaMax)
 			Stamina = StaminaMax;
 	}

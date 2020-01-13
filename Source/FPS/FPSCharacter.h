@@ -83,6 +83,7 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TMap<EWeaponType, AWeapon*> WeaponInventory;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float Stamina;	// time in seconds which character can sprint
 	float StaminaMax;
 	bool bIsSprinting;
@@ -100,6 +101,7 @@ private:
 	void Move(float AxisValue);
 	void Strafe(float AxisValue);
 	void NormalizeMoveStrafeVector(float &Multiplier); // this function should be called in both Move() and Strafe() function to prevent increased speed while moving and strafing same time
+	UFUNCTION(BlueprintCallable)
 	void TryJump();
 	void PerformCrouch();	// maybe should be changed in future to implement it smoothly with animation. and maybe implemented as toggle
 	void PerformUnCrouch();
