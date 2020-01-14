@@ -33,7 +33,7 @@ private:
 	TWeakObjectPtr<UBlackboardComponent> Blackboard;
 
 	float FindDistanceToEnemy();
-	void TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeapon, EWeaponType SecondWeapon, EWeaponType ThirdWeapon);
+	void TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeaponToTry, EWeaponType SecondWeaponToTry, EWeaponType ThirdWeaponToTry);
 
 protected:
 

@@ -48,13 +48,13 @@ float UBTS_ChooseWeapon::FindDistanceToEnemy()
 	return DistanceToEnemy;
 }
 
-void UBTS_ChooseWeapon::TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeapon, EWeaponType SecondWeapon, EWeaponType ThirdWeapon)
+void UBTS_ChooseWeapon::TakeWeaponIfItIsNotEmpty(EWeaponType FirstWeaponToTry, EWeaponType SecondWeaponToTry, EWeaponType ThirdWeaponToTry)
 {
-	if (OwnerPawn->CheckIfCharacterHasWeapon(FirstWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(FirstWeapon))
-		OwnerPawn->TakeNewWeapon(FirstWeapon);
-	else if (OwnerPawn->CheckIfCharacterHasWeapon(SecondWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(SecondWeapon))
-		OwnerPawn->TakeNewWeapon(SecondWeapon);
-	else if (OwnerPawn->CheckIfCharacterHasWeapon(ThirdWeapon) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(ThirdWeapon))
-		OwnerPawn->TakeNewWeapon(ThirdWeapon);
+	if (OwnerPawn->CheckIfCharacterHasWeapon(FirstWeaponToTry) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(FirstWeaponToTry))
+		OwnerPawn->TakeNewWeapon(FirstWeaponToTry);
+	else if (OwnerPawn->CheckIfCharacterHasWeapon(SecondWeaponToTry) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(SecondWeaponToTry))
+		OwnerPawn->TakeNewWeapon(SecondWeaponToTry);
+	else if (OwnerPawn->CheckIfCharacterHasWeapon(ThirdWeaponToTry) && !OwnerPawn->CheckIfWeaponByTypeIsEmpty(ThirdWeaponToTry))
+		OwnerPawn->TakeNewWeapon(ThirdWeaponToTry);
 }
 
