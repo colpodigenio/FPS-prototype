@@ -102,7 +102,9 @@ void UBTS_VisualSearch::SetEnemyToAttack()
 
 void UBTS_VisualSearch::FocusOnEnemyOrClear()
 {
-	if (EnemyToAttack.IsValid())
+	uint8 BehaviorState;
+	BehaviorState = Blackboard->GetValueAsEnum(BehaviorStateKey.SelectedKeyName); // for fighting state equals 1
+	if (EnemyToAttack.IsValid() && BehaviorState == 1)
 		OwnerController->SetFocus(EnemyToAttack.Get());
 	else
 		OwnerController->ClearFocus(EAIFocusPriority::Gameplay);

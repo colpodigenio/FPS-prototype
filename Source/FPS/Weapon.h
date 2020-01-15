@@ -52,9 +52,9 @@ protected:
 	int32 AmmoTotalCapacity; // total ammo that can be carried excluding ammo in weapon
 	UPROPERTY(VisibleDefaultsOnly)
 	int32 AmmoMagazineCapacity;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	int32 AmmoTotal; // ammo excluding ammo in magazine 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 AmmoInMagazine;
 	int32 DamageAmount;
 	int32 DefaultDamage;

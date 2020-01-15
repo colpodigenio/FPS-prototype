@@ -36,6 +36,8 @@ public:
 	FBlackboardKeySelector TargetPickupKey;
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector ChosenPickupNeedValueKey;
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector BehaviorStateKey;
 
 protected:
 
