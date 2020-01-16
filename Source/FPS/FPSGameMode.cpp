@@ -15,4 +15,6 @@ AFPSGameMode::AFPSGameMode()
 		Cast<APickup>(It)->PickupID = id;
 		id++;
 	}
+
+	BotDifficulty = EBotDifficulty::Easy;
 }

@@ -45,3 +45,24 @@ enum class EPickupType : uint8
 	Weapon,
 	Powerup
 };
+
+UENUM(BlueprintType)
+namespace EBotDifficulty
+{
+	enum Type
+	{
+		Easy = 4,
+		Medium = 2,
+		Hard = 1
+	};
+}
+
+namespace EMovementState
+{
+	enum Type
+	{
+		Walking = 400,
+		Running = 600,
+		Sprinting = 1000
+	};
+}

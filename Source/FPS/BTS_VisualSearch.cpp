@@ -61,7 +61,7 @@ void UBTS_VisualSearch::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	FilterVisiblePickups(GetAllPickupsInFieldOfView());
 	SetTargetPickup();
 	//UE_LOG(LogTemp, Warning, TEXT("%s | %f"), *this->GetName(), ChosenPickupNeedValue)
-	PRINT("%s | %f", *this->GetName(), ChosenPickupNeedValue)
+	//PRINT("%s | %f", *this->GetName(), ChosenPickupNeedValue)
 
 	if (TargetPickup.Get() && ChosenPickupNeedValue > 0.0f)
 		Blackboard->SetValueAsObject(TargetPickupKey.SelectedKeyName, TargetPickup.Get());
@@ -280,8 +280,16 @@ void UBTS_VisualSearch::CalculateAssaultRifleAmmoAndWeaponNeed()
 	AWeapon* AssaultRifleRef = OwnerPawn->GetWeaponByType(EWeaponType::AssaultRifle);
 	if (AssaultRifleRef)
 	{
-		AssaultRifleAmmoNeedRatio = AssaultRifleRef->GetRelativeAmmoCapacity();
-		AssaultRifleNeedRatio = AssaultRifleRef->GetRelativeAmmoCapacity();
+		if (AssaultRifleRef->GetRelativeAmmoCapacity() > 0.2f)
+		{
+			AssaultRifleAmmoNeedRatio = 0.3f / AssaultRifleRef->GetRelativeAmmoCapacity();
+			AssaultRifleNeedRatio = 0.3f / AssaultRifleRef->GetRelativeAmmoCapacity();
+		}
+		else
+		{
+			AssaultRifleAmmoNeedRatio = 1.5f;
+			AssaultRifleNeedRatio = 1.5f;
+		}
 	}
 	else
 	{
@@ -295,8 +303,16 @@ void UBTS_VisualSearch::CalculateShotgunAmmoAndWeaponNeed()
 	AWeapon* ShotgunRef = OwnerPawn->GetWeaponByType(EWeaponType::Shotgun);
 	if (ShotgunRef)
 	{
-		ShotgunAmmoNeedRatio = ShotgunRef->GetRelativeAmmoCapacity();
-		ShotgunNeedRatio = ShotgunRef->GetRelativeAmmoCapacity();
+		if (ShotgunRef->GetRelativeAmmoCapacity() > 0.2f)
+		{
+			ShotgunAmmoNeedRatio = 1 / ShotgunRef->GetRelativeAmmoCapacity();
+			ShotgunNeedRatio = 1 / ShotgunRef->GetRelativeAmmoCapacity();
+		}
+		else
+		{
+			ShotgunAmmoNeedRatio = 1.5f;
+			ShotgunNeedRatio = 1.5f;
+		}
 	}
 	else
 	{
@@ -310,8 +326,16 @@ void UBTS_VisualSearch::CalculateRocketLauncherAmmoAndWeaponNeed()
 	AWeapon* RocketLauncherRef = OwnerPawn->GetWeaponByType(EWeaponType::RocketLauncher);
 	if (RocketLauncherRef)
 	{
-		RocketLauncherAmmoNeedRatio = RocketLauncherRef->GetRelativeAmmoCapacity();
-		RocketLauncherNeedRatio = RocketLauncherRef->GetRelativeAmmoCapacity();
+		if (RocketLauncherRef->GetRelativeAmmoCapacity())
+		{
+			RocketLauncherAmmoNeedRatio = 1 / RocketLauncherRef->GetRelativeAmmoCapacity();
+			RocketLauncherNeedRatio = 1 / RocketLauncherRef->GetRelativeAmmoCapacity();
+		}
+		else
+		{
+			RocketLauncherAmmoNeedRatio = 1.5f;
+			RocketLauncherNeedRatio = 1.5f;
+		}
 	}
 	else
 	{

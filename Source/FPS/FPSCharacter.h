@@ -13,14 +13,6 @@ class AWeapon;
 class USkeletalMeshComponent;
 class UPowerupComponent;
 
-UENUM(BlueprintType)
-enum class EBotDifficulty : uint8
-{
-	Easy,
-	Medium,
-	Hard
-};
-
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
 {
@@ -57,6 +49,11 @@ public:
 	void TakeNewWeapon(EWeaponType NewWeaponType);
 	bool CheckIfWeaponByTypeIsEmpty(EWeaponType WeaponType);
 
+	UFUNCTION(BlueprintCallable)
+	void Move(float AxisValue = 1.0f);
+	UFUNCTION(BlueprintCallable)
+	void Strafe(float AxisValue = 1.0f);
+
 	const float RunningMultiplier = 0.55; // walking is 2 times slower
 
 
@@ -87,23 +84,16 @@ private:
 	float Stamina;	// time in seconds which character can sprint
 	float StaminaMax;
 	bool bIsSprinting;
-	bool bIsMoving;
-	bool bIsMovingForward;
+	bool bIsNotMovingBackwards;
 	bool bIsStrafing;
-	bool bIsRunning;
-	float MovementMultiplier;
-	float LastMovementMultiplier;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EBotDifficulty BotDifficulty;
+	EMovementState::Type MovementState;
+	EMovementState::Type LastMovingState;
 
 	FVector LastLocation; // TO DELETE temporary variable to determine movement speed for debug
-
-	void Move(float AxisValue);
-	void Strafe(float AxisValue);
-	void NormalizeMoveStrafeVector(float &Multiplier); // this function should be called in both Move() and Strafe() function to prevent increased speed while moving and strafing same time
+	
 	UFUNCTION(BlueprintCallable)
 	void TryJump();
-	void PerformCrouch();	// maybe should be changed in future to implement it smoothly with animation. and maybe implemented as toggle
+	void PerformCrouch();	//MAYBE SHOULD BE DELETED!!! maybe should be changed in future to implement it smoothly with animation. and maybe implemented as toggle 
 	void PerformUnCrouch();
 	void StartFiringWeapon();
 	void StopFiringWeapon();

@@ -35,17 +35,15 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	JumpMaxCount = 2;
 
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+	MovementState = EMovementState::Running;
+	LastMovingState = MovementState;
+	GetCharacterMovement()->MaxWalkSpeed = MovementState;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 100.f;
 	StaminaMax = 5.0f;
 	Stamina = StaminaMax;
-	MovementMultiplier = RunningMultiplier;
-	LastMovementMultiplier = MovementMultiplier;
-
-	bIsSprinting = false;
-	bIsMoving = false;
 	bIsStrafing = false;
-	bIsRunning = true;
+	bIsSprinting = false;
+	bIsNotMovingBackwards = true;
 
 	InventorySocketName = TEXT("InventorySocket");
 
@@ -109,26 +107,15 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void AFPSCharacter::Move(float AxisValue)
 {
-	float MoveValue = MovementMultiplier * AxisValue;
-	NormalizeMoveStrafeVector(MoveValue);
-	AddMovementInput(GetCapsuleComponent()->GetForwardVector(), MoveValue);
-	AxisValue == 0.0f ? bIsMoving = false : bIsMoving = true;
-	AxisValue > 0.0f ? bIsMovingForward = true : bIsMovingForward = false;
+	AddMovementInput(GetCapsuleComponent()->GetForwardVector(), AxisValue);
+	AxisValue >= 0.0f ? bIsNotMovingBackwards = true : bIsNotMovingBackwards = false;
 }
 
 void AFPSCharacter::Strafe(float AxisValue)
 {
 	if (bIsSprinting) return;
-	float StrafeValue = MovementMultiplier * AxisValue;
-	NormalizeMoveStrafeVector(StrafeValue);
-	AddMovementInput(GetCapsuleComponent()->GetRightVector(), StrafeValue);
+	AddMovementInput(GetCapsuleComponent()->GetRightVector(), AxisValue);
 	AxisValue == 0.0f ? bIsStrafing = false : bIsStrafing = true;		
-}
-
-void AFPSCharacter::NormalizeMoveStrafeVector(float &Multiplier)
-{
-	if (bIsMoving && bIsStrafing)
-		Multiplier /= UKismetMathLibrary::Sqrt(2);
 }
 
 void AFPSCharacter::TryJump()
@@ -143,21 +130,19 @@ void AFPSCharacter::TryJump()
 void AFPSCharacter::PerformCrouch()
 {
 	Crouch();
-	MovementMultiplier = 1.0f;
 }
 
 void AFPSCharacter::PerformUnCrouch()
 {
 	UnCrouch();
-	MovementMultiplier = LastMovementMultiplier;
 }
 
 void AFPSCharacter::StartSprint()
 {
-	if (!bIsStrafing && bIsMovingForward && Stamina > 0.0f)
+	if (!bIsStrafing && bIsNotMovingBackwards && Stamina > 0.0f)
 	{
-		bIsSprinting = true;
-		MovementMultiplier = 1.0f;
+		MovementState = EMovementState::Sprinting;
+		GetCharacterMovement()->MaxWalkSpeed = MovementState;
 	}
 }
 
@@ -165,44 +150,52 @@ void AFPSCharacter::Sprint(float DeltaTime)
 {
 	if (GetCharacterMovement()->IsFalling() || Stamina <= 0.0f)
 		EndSprint();
-	if (bIsSprinting && Stamina > 0)
+	if (MovementState == EMovementState::Sprinting && Stamina > 0)
 		Stamina -= DeltaTime;
 }
 
 void AFPSCharacter::RestoreStamina(float DeltaTime)
 {
-	if (!bIsSprinting && !GetCharacterMovement()->IsFalling() && Stamina < StaminaMax)
+	if (GetCharacterMovement()->IsFalling())
+		return;
+	if (Stamina < StaminaMax)
 	{
-		if (bIsRunning)
-			Stamina += DeltaTime / 4.0f;
-		else
+		switch (MovementState)
+		{
+		case EMovementState::Walking:
 			Stamina += DeltaTime / 2.0f;
-		if (Stamina > StaminaMax)
-			Stamina = StaminaMax;
+			break;
+		case EMovementState::Running:
+			Stamina += DeltaTime / 4.0f;
+			break;
+		}
 	}
+	else
+		Stamina = StaminaMax;
 }
 
 void AFPSCharacter::EndSprint()
 {
-	bIsSprinting = false;
-	MovementMultiplier = LastMovementMultiplier;
+	MovementState = LastMovingState;
+	GetCharacterMovement()->MaxWalkSpeed = MovementState;
 }
 
 void AFPSCharacter::ToggleWalkRun()
 {
 	if (bIsCrouched) return;
-
-	if (bIsRunning)
+	switch (MovementState)
 	{
-		MovementMultiplier = 0.5f * RunningMultiplier;
-		bIsRunning = false;
+	case EMovementState::Walking:
+		MovementState = EMovementState::Running;
+		LastMovingState = MovementState;
+		GetCharacterMovement()->MaxWalkSpeed = MovementState;
+		break;
+	case EMovementState::Running:
+		MovementState = EMovementState::Walking;
+		LastMovingState = MovementState;
+		GetCharacterMovement()->MaxWalkSpeed = MovementState;
+		break;
 	}
-	else
-	{
-		MovementMultiplier = RunningMultiplier;
-		bIsRunning = true;
-	}
-	LastMovementMultiplier = MovementMultiplier;
 }
 
 void AFPSCharacter::StartFiringWeapon()
