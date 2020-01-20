@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "WeaponInterface.h"
 #include "Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AssaultRifle.h"
@@ -69,7 +68,6 @@ void AFPSCharacter::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("Stamina  = %f"), Stamina)
 	//UE_LOG(LogTemp, Warning, TEXT("Speed  = %f"), Speed/DeltaTime)
 	LastLocation = GetActorLocation();
-	
 }
 
 void AFPSCharacter::OnConstruction(const FTransform& Transform)
@@ -327,9 +325,9 @@ void AFPSCharacter::DisableDamageBoost()
 	}
 }
 
-void AFPSCharacter::ReceiveDamage(int32 DamageAmount)
+void AFPSCharacter::ReceiveDamage(int32 DamageAmount, AController* DamageInstigator)
 {
-	HealthComponent->ApplyDamage(DamageAmount);
+	HealthComponent->ApplyDamage(DamageAmount, DamageInstigator);
 }
 
 bool AFPSCharacter::CheckIfCharacterHasWeapon(EWeaponType WeaponType)

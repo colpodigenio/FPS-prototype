@@ -50,11 +50,21 @@ void AFPSAIController::Tick(float DeltaTime)
 	SetRandomAimingDeviation();
 }
 
+void AFPSAIController::SetPlayerNameInGM_Implementation()
+{
+	Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->PlayersNames.Add(*GetName());
+	UE_LOG(LogTemp, Warning, TEXT("YES!!!!"))
+}
+
 void AFPSAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SetRandomAimingDeviation();
+	if (this->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
+	{
+		IScoreCountingInterface::Execute_SetPlayerNameInGM(this);
+	};
 }
 
 void AFPSAIController::SetRandomAimingDeviation()

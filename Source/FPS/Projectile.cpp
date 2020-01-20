@@ -10,12 +10,13 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Perception/AISense_Damage.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/Controller.h"
 
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Mesh = CreateAbstractDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	Mesh->SetCollisionObjectType(PROJECTILE_OBJ);
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -24,17 +25,21 @@ AProjectile::AProjectile()
 	Mesh->SetCollisionResponseToChannel(ENEMY_OBJ, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	ProjectileMovement = CreateAbstractDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	DamageDone = 20.0f;
 
 	ProjectileMovement->bInitialVelocityInLocalSpace = false;
 }
 
+#include "FPSPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();	
+	SetLifeSpan(2.0f);
 	Mesh->OnComponentHit.AddDynamic(this, &AProjectile::HitTarget);
+	DamageInstigator = Cast<AController>(Cast<APawn>(GetOwner()->GetOwner())->GetController()); // get controller which fires this projectile
 }
 
 void AProjectile::OnConstruction(const FTransform& Transform)
@@ -67,14 +72,12 @@ void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 {
 	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.0f, 16, FColor::Emerald, true);
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
-	if (Enemy)
+	if (Enemy && Hit.PhysMaterial.Get())
 	{
-		if (Hit.PhysMaterial == nullptr)
-			return;
-		if (Hit.PhysMaterial->SurfaceType.GetValue() == HEAD_SURFACE)
-			Enemy->ReceiveDamage(3 * DamageDone);
+		if (UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get()) == HEAD_SURFACE)
+ 			Enemy->ReceiveDamage(3 * DamageDone, DamageInstigator);
 		else
-			Enemy->ReceiveDamage(DamageDone);
+ 			Enemy->ReceiveDamage(DamageDone, DamageInstigator);
 		ReportDamageSense(Enemy);
 	}
 	Destroy();

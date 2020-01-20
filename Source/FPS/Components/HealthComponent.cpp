@@ -2,6 +2,8 @@
 
 #include "HealthComponent.h"
 #include "FPSCharacter.h"
+#include "GameFramework/Controller.h"
+#include "ScoreCountingInterface.h"
 
 UHealthComponent::UHealthComponent()
 	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(100), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
@@ -30,7 +32,7 @@ void UHealthComponent::AddArmor(int32 ArmorDelta, bool CanBoostMaxArmor)
 	}
 }
 
-void UHealthComponent::ApplyDamage(int32 DamageDelta)
+void UHealthComponent::ApplyDamage(int32 DamageDelta, AController* DamageInstigator)
 {
 	if (Armor > 0)
 	{
@@ -50,7 +52,17 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta)
 	else
 		Health -= DamageDelta;
 	if (Health <= 0)
+	{
+		if (DamageInstigator && DamageInstigator->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
+		{
+			//IScoreCountingInterface::Execute_AddFrag(DamageInstigator);
+		};
 		Die();
+	}
+	if (DamageInstigator && DamageInstigator->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
+	{
+		PRINT("Hi, my name is %s", *DamageInstigator->GetName())
+	};
 }
 
 void UHealthComponent::StartRegenerateHealthTimer(int32 NewRegenerationDuration)
@@ -97,5 +109,6 @@ void UHealthComponent::StopRevertHealthToMaxTimer()
 void UHealthComponent::Die()
 {
 	bIsDead = true;
+	GetOwner()->Destroy();
 }
 

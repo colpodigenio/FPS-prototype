@@ -24,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void ReceiveDamage(int32 DamageAmount);
+	void ReceiveDamage(int32 DamageAmount, AController* DamageInstigator);
 	bool CheckIfCharacterHasWeapon(EWeaponType WeaponType);
 	void AddAmmoFromWeaponPickup(EWeaponType WeaponType);
 	UFUNCTION(BlueprintImplementableEvent)
@@ -53,9 +53,6 @@ public:
 	void Move(float AxisValue = 1.0f);
 	UFUNCTION(BlueprintCallable)
 	void Strafe(float AxisValue = 1.0f);
-
-	const float RunningMultiplier = 0.55; // walking is 2 times slower
-
 
 protected:
 

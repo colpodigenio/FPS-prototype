@@ -21,7 +21,7 @@ void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherAct
 		//OtherComp->AddRadialImpulse(SphereHit.ImpactPoint - Hit.ImpactPoint, 200.f, 1000.f, ERadialImpulseFalloff::RIF_Linear);
 		float DistanceToEnemy = (BlastWaveHit.ImpactPoint - Hit.ImpactPoint).Size();
 		UE_LOG(LogTemp, Warning, TEXT("%s receives damage = %f, distance to enemy = %f"), *BlastWaveHit.GetActor()->GetName(), DamageDone * DistanceToEnemy / 200.0f, DistanceToEnemy)
- 		Enemy->ReceiveDamage(DamageDone * DistanceToEnemy / 200.0f);
+ 		Enemy->ReceiveDamage(DamageDone * DistanceToEnemy / 200.0f, DamageInstigator);
 		ReportDamageSense(Enemy);
 	}
 	Destroy();

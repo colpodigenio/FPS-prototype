@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FPS.generated.h"
 
 // Physical surface macros
 #define HEAD_SURFACE EPhysicalSurface::SurfaceType1
@@ -66,3 +67,25 @@ namespace EMovementState
 		Sprinting = 1000
 	};
 }
+
+USTRUCT(BlueprintType)
+struct FDeathmatchScore
+{
+	GENERATED_BODY()
+
+	FDeathmatchScore()
+	: Frags(0), Deaths(0), Suicides(0), Score(0), Accuracy(100.0f), FavouriteWeapon(EWeaponType::None) {}
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Frags;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Deaths;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Suicides;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Score;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float Accuracy;
+	UPROPERTY(BlueprintReadOnly)
+	EWeaponType FavouriteWeapon;
+};

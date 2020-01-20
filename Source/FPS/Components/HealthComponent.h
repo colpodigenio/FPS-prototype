@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+class AController;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FPS_API UHealthComponent : public UActorComponent
@@ -33,7 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
 	void AddArmor(int32 ArmorDelta, bool CanBoostMaxArmor);
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
-	void ApplyDamage(int32 DamageDelta);
+	void ApplyDamage(int32 DamageDelta, AController* DamageInstigator);
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
 	void StartRegenerateHealthTimer(int32 NewRegenerationDuration); // this function is called by regeneration power up
 

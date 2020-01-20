@@ -18,4 +18,7 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EBotDifficulty::Type> BotDifficulty;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FName> PlayersNames;
 };

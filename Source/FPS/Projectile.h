@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FPS.h"
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
@@ -18,6 +19,8 @@ class FPS_API AProjectile : public AActor
 public:	
 	AProjectile();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	UPROPERTY(BlueprintReadOnly)
+	AController* DamageInstigator;
 
 protected:
 
