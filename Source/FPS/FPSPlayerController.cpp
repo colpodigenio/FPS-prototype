@@ -2,19 +2,15 @@
 
 #include "FPSPlayerController.h"
 #include "FPSGameMode.h"
+#include "Components/ScoreHandlingComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-void AFPSPlayerController::SetPlayerNameInGM_Implementation()
+AFPSPlayerController::AFPSPlayerController()
 {
-	Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->PlayersNames.Add(*GetName());
-	UE_LOG(LogTemp, Warning, TEXT("YES!!!!"))
+	ScoreHandlingComponent = CreateDefaultSubobject<UScoreHandlingComponent>(TEXT("ScoreHandlingComponent"));
 }
 
 void AFPSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (this->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
-	{
-		IScoreCountingInterface::Execute_SetPlayerNameInGM(this);
-	};
 }

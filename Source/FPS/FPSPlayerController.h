@@ -4,19 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ScoreCountingInterface.h"
 #include "FPSPlayerController.generated.h"
 
 class AFPSCharacter;
+class UScoreHandlingComponent;
+
 UCLASS()
-class FPS_API AFPSPlayerController : public APlayerController, public IScoreCountingInterface
+class FPS_API AFPSPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	virtual void SetPlayerNameInGM_Implementation() override;
+
+	AFPSPlayerController();
+	FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UScoreHandlingComponent* ScoreHandlingComponent;
 };

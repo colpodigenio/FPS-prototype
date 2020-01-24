@@ -2,8 +2,9 @@
 
 #include "HealthComponent.h"
 #include "FPSCharacter.h"
+#include "FPS.h"
 #include "GameFramework/Controller.h"
-#include "ScoreCountingInterface.h"
+#include "ScoreHandlingComponent.h"
 
 UHealthComponent::UHealthComponent()
 	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(100), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
@@ -53,16 +54,14 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta, AController* DamageInstiga
 		Health -= DamageDelta;
 	if (Health <= 0)
 	{
-		if (DamageInstigator && DamageInstigator->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
-		{
-			//IScoreCountingInterface::Execute_AddFrag(DamageInstigator);
-		};
+		if(DamageInstigator != Cast<APawn>(GetOwner())->GetController())
+			Cast<UScoreHandlingComponent>(DamageInstigator->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddFrag();
+		else
+			Cast<UScoreHandlingComponent>(DamageInstigator->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddSuicide();
+		Cast<UScoreHandlingComponent>(Cast<APawn>(GetOwner())->GetController()->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddDeath();
+		PRINT("Damage taken by %s", *Cast<APawn>(GetOwner())->GetName())
 		Die();
 	}
-	if (DamageInstigator && DamageInstigator->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
-	{
-		PRINT("Hi, my name is %s", *DamageInstigator->GetName())
-	};
 }
 
 void UHealthComponent::StartRegenerateHealthTimer(int32 NewRegenerationDuration)
