@@ -4,6 +4,26 @@
 #include "Kismet/GameplayStatics.h"
 #include "FPSGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/ScoreHandlingComponent.h"
+
+AFPSAIController::AFPSAIController()
+{
+	ScoreHandlingComponent = CreateDefaultSubobject<UScoreHandlingComponent>(TEXT("ScoreHandlingComponent"));
+}
+
+void AFPSAIController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetRandomAimingDeviation();
+}
+
+void AFPSAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	SetRandomAimingDeviation();
+}
 
 void AFPSAIController::UpdateControlRotation(float DeltaTime, bool bUpdatePawn /*= true*/)
 {
@@ -41,30 +61,6 @@ void AFPSAIController::UpdateControlRotation(float DeltaTime, bool bUpdatePawn /
 			}
 		}
 	}
-}
-
-void AFPSAIController::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	SetRandomAimingDeviation();
-}
-
-void AFPSAIController::SetPlayerNameInGM_Implementation()
-{
-	Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->PlayersNames.Add(*GetName());
-	UE_LOG(LogTemp, Warning, TEXT("YES!!!!"))
-}
-
-void AFPSAIController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	SetRandomAimingDeviation();
-	if (this->GetClass()->ImplementsInterface(UScoreCountingInterface::StaticClass()))
-	{
-		IScoreCountingInterface::Execute_SetPlayerNameInGM(this);
-	};
 }
 
 void AFPSAIController::SetRandomAimingDeviation()

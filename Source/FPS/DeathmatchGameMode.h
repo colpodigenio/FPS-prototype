@@ -15,10 +15,10 @@ class FPS_API ADeathmatchGameMode : public AFPSGameMode
 public:
 
 	ADeathmatchGameMode();
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TMap<FName, FDeathmatchScore> ScoreBoard;
 
 private:
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TMap<FName, FDeathmatchScore> ScoreBoard;
 	
 };
