@@ -28,7 +28,6 @@ void UScoreHandlingComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	SendScoreToGM();
-	PRINT("%s", *GetOwner()->GetName())
 }
 
 void UScoreHandlingComponent::SetPlayerNameInGM()

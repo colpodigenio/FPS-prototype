@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon.h"
+#include "FPS.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Perception/AISense_Damage.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -21,7 +22,7 @@ AProjectile::AProjectile()
 	Mesh->SetCollisionObjectType(PROJECTILE_OBJ);
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(PROJECTILE_OBJ, ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(ENEMY_TRACE, ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ENEMY_TRACE, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ENEMY_OBJ, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
@@ -54,23 +55,15 @@ void AProjectile::SetProjectileInitialVelocity()
 	AWeapon* OwningWeapon = Cast<AWeapon>(GetOwner());
 	if (!OwningWeapon)
 		return;
-
-	FHitResult HitResult;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
-	GetWorld()->LineTraceSingleByChannel(HitResult, OwningCharacter->GetFPSCameraLocation(),
-		OwningCharacter->GetFPSCameraLocation() + 100000 * OwningCharacter->GetFPSCameraForwardVector(), ENEMY_TRACE);
-	FVector DirectionStartPoint = OwningWeapon->GetWeaponMesh()->GetSocketLocation("Muzzle");
-	FVector DirectionEndPoint;
-	HitResult.bBlockingHit ? DirectionEndPoint = HitResult.ImpactPoint : DirectionEndPoint = HitResult.TraceEnd;
-	FVector ShotDirection = (DirectionEndPoint - DirectionStartPoint).GetSafeNormal();
-	ProjectileMovement->Velocity = ShotDirection;
+	ProjectileMovement->Velocity = OwningCharacter->GetFPSCameraForwardVector();
 }
 
 #include "DrawDebugHelpers.h"
 
 void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 8.0f, 16, FColor::Emerald, true);
+	PlayImpactEffect(Hit.ImpactPoint, Hit.PhysMaterial.Get());
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
 	if (Enemy && Hit.PhysMaterial.Get())
 	{

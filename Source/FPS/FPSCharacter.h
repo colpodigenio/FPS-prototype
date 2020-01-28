@@ -32,6 +32,7 @@ public:
 	void AddWeaponFromWeaponPickup(EWeaponType WeaponType);
 	FVector GetFPSCameraLocation() const;
 	FVector GetFPSCameraForwardVector() const;
+	FRotator GetFPSCameraRotation() const;
 	bool IsPowerupEnabled() const;
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
 	void EnablePowerup(EPowerupType PowerupType);

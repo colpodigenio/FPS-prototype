@@ -17,10 +17,13 @@ class FPS_API AProjectile : public AActor
 	GENERATED_BODY()
 
 public:	
+
 	AProjectile();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	UPROPERTY(BlueprintReadOnly)
 	AController* DamageInstigator;
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayImpactEffect(FVector ImpactPoint, UPhysicalMaterial* ImpactPhysMat);
 
 protected:
 

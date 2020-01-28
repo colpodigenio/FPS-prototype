@@ -95,15 +95,17 @@ void AWeapon::AddRecoil()
 
 void AWeapon::ShotProjectile()
 {
-	// if (GetOwner()->GetController.GetClass() == APlayerController::StaticClass())
-	//UE_LOG(LogTemp, Warning, TEXT("%s | %i"), *this->GetName(), DamageAmount)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Owner = this;
 	FVector NoiseLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(400.0f, 400.0f, 50.0f));
 	UAISense_Hearing::ReportNoiseEvent(GetWorld(), NoiseLocation, 1.f, GetOwner(), 5000.0f);
 	ensureMsgf(SpawnParams.Owner, TEXT("When shooting this projectile you should set the firing weapon as an owner in FActorSpawnParameters"));
-	GetWorld()->SpawnActor<AProjectile>(ProjectileType, GetWeaponMesh()->GetSocketTransform(TEXT("Muzzle")), SpawnParams);
+	FVector PawnCameraLocation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraLocation();
+	FVector PawnForwardVector = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraForwardVector();
+	FRotator PawnCameraRotation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraRotation();
+	GetWorld()->SpawnActor<AProjectile>(ProjectileType, PawnCameraLocation + 50 * PawnForwardVector, PawnCameraRotation, SpawnParams);
+	
 }
 
 void AWeapon::BeginPlay()

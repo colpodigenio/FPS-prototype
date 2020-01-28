@@ -4,25 +4,31 @@
 #include "FPSCharacter.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "WorldCollision.h"
+#include "FPS.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-#include "DrawDebugHelpers.h"
 
 void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	OtherComp->AddImpulseAtLocation(GetVelocity() * 10.0f, GetActorLocation());
-
-	FHitResult BlastWaveHit;
-	GetWorld()->SweepSingleByChannel(BlastWaveHit, Hit.ImpactPoint, Hit.ImpactPoint, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(200.f));
-	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 200.f, 12, FColor::Black, false, 5.f, 0, 1.0f);
-	AFPSCharacter* Enemy = Cast<AFPSCharacter>(BlastWaveHit.GetActor());
-	if (Enemy)
+	if(OtherComp->Mobility == EComponentMobility::Movable)
+		OtherComp->AddImpulseAtLocation(GetVelocity() * 10.0f, GetActorLocation());
+	PlayImpactEffect(Hit.ImpactPoint, nullptr);
+	TArray<AActor*> AllParticipants;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFPSCharacter::StaticClass(), AllParticipants);
+	for (auto It : AllParticipants)
 	{
-		//OtherComp->AddRadialImpulse(SphereHit.ImpactPoint - Hit.ImpactPoint, 200.f, 1000.f, ERadialImpulseFalloff::RIF_Linear);
-		float DistanceToEnemy = (BlastWaveHit.ImpactPoint - Hit.ImpactPoint).Size();
-		UE_LOG(LogTemp, Warning, TEXT("%s receives damage = %f, distance to enemy = %f"), *BlastWaveHit.GetActor()->GetName(), DamageDone * DistanceToEnemy / 200.0f, DistanceToEnemy)
- 		Enemy->ReceiveDamage(DamageDone * DistanceToEnemy / 200.0f, DamageInstigator);
-		ReportDamageSense(Enemy);
+		AFPSCharacter* Participant = Cast<AFPSCharacter>(It);
+		float DistanceToParticipant = (Participant->GetActorLocation() - Hit.ImpactPoint).Size();
+		if (Participant == OtherActor)
+		{
+			Participant->ReceiveDamage(DamageDone, DamageInstigator);
+			continue;
+		}
+		if (DistanceToParticipant <= 200.f)
+			Participant->ReceiveDamage(DamageDone * (1. - DistanceToParticipant / 300.f), DamageInstigator);
+		else if (DistanceToParticipant < 50.f)
+ 			Participant->ReceiveDamage(DamageDone, DamageInstigator);
 	}
 	Destroy();
 }

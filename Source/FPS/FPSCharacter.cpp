@@ -68,6 +68,8 @@ void AFPSCharacter::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("Stamina  = %f"), Stamina)
 	//UE_LOG(LogTemp, Warning, TEXT("Speed  = %f"), Speed/DeltaTime)
 	LastLocation = GetActorLocation();
+
+
 }
 
 void AFPSCharacter::OnConstruction(const FTransform& Transform)
@@ -357,6 +359,11 @@ FVector AFPSCharacter::GetFPSCameraLocation() const
 FVector AFPSCharacter::GetFPSCameraForwardVector() const
 {
 	return FPSCamera->GetForwardVector();
+}
+
+FRotator AFPSCharacter::GetFPSCameraRotation() const
+{
+	return FPSCamera->GetComponentRotation();
 }
 
 bool AFPSCharacter::IsPowerupEnabled() const

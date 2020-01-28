@@ -59,7 +59,6 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta, AController* DamageInstiga
 		else
 			Cast<UScoreHandlingComponent>(DamageInstigator->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddSuicide();
 		Cast<UScoreHandlingComponent>(Cast<APawn>(GetOwner())->GetController()->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddDeath();
-		PRINT("Damage taken by %s", *Cast<APawn>(GetOwner())->GetName())
 		Cast<APawn>(GetOwner())->GetController()->UnPossess();
 		Die();
 	}
