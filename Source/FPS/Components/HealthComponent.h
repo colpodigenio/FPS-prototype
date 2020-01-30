@@ -63,4 +63,6 @@ private:
 	void RevertHealthToMax();
 	void StopRevertHealthToMaxTimer();
 	void Die();
+	void ChangeScore(AController* TargetController);
+	void ForceControllerUnpossesPawn();
 };

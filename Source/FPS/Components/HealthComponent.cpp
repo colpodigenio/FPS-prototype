@@ -5,6 +5,8 @@
 #include "FPS.h"
 #include "GameFramework/Controller.h"
 #include "ScoreHandlingComponent.h"
+#include "FPSAIController.h"
+#include "FPSPlayerController.h"
 
 UHealthComponent::UHealthComponent()
 	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(100), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
@@ -54,12 +56,8 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta, AController* DamageInstiga
 		Health -= DamageDelta;
 	if (Health <= 0)
 	{
-		if(DamageInstigator != Cast<APawn>(GetOwner())->GetController())
-			Cast<UScoreHandlingComponent>(DamageInstigator->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddFrag();
-		else
-			Cast<UScoreHandlingComponent>(DamageInstigator->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddSuicide();
-		Cast<UScoreHandlingComponent>(Cast<APawn>(GetOwner())->GetController()->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddDeath();
-		Cast<APawn>(GetOwner())->GetController()->UnPossess();
+		ChangeScore(DamageInstigator);		
+		ForceControllerUnpossesPawn();
 		Die();
 	}
 }
@@ -109,5 +107,26 @@ void UHealthComponent::Die()
 {
 	bIsDead = true;
 	GetOwner()->Destroy();
+}
+
+void UHealthComponent::ChangeScore(AController* TargetController)
+{
+	if (TargetController != Cast<APawn>(GetOwner())->GetController())
+		Cast<UScoreHandlingComponent>(TargetController->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddFrag();
+	else
+		Cast<UScoreHandlingComponent>(TargetController->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddSuicide();
+	Cast<UScoreHandlingComponent>(Cast<APawn>(GetOwner())->GetController()->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddDeath();
+}
+
+void UHealthComponent::ForceControllerUnpossesPawn()
+{
+	if (Cast<AFPSAIController>(Cast<APawn>(GetOwner())->GetController()))
+		Cast<APawn>(GetOwner())->GetController()->UnPossess();
+	else
+	{
+		AFPSPlayerController* PC = Cast<AFPSPlayerController>(Cast<APawn>(GetOwner())->GetController());
+		PC->SpawnAndPossesSpectator();
+		PC->StartRespawnTimer();
+	}
 }
 

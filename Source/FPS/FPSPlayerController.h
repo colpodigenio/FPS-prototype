@@ -18,12 +18,16 @@ public:
 
 	AFPSPlayerController();
 	FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
+	void SpawnAndPossesSpectator();
+	void StartRespawnTimer();
 
 protected:
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, meta = (BlueprintProtected = "true"))
+	TSubclassOf<AFPSCharacter> PawnToSpawn;
 
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UScoreHandlingComponent* ScoreHandlingComponent;
+	void RespawnPlayer();
 };
