@@ -3,34 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FPS.h"
 #include "Components/ActorComponent.h"
-#include "ScoreHandlingComponent.generated.h"
+#include "RespawnComponent.generated.h"
 
-class AFPSGameMode;
+class AFPSCharacter;
+class UClass;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FPS_API UScoreHandlingComponent : public UActorComponent
+class FPS_API URespawnComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UScoreHandlingComponent();
+	URespawnComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UPROPERTY(BlueprintReadOnly)
-	FDeathmatchScore Score;
-	void SetPlayerNameInGM();
-	void AddFrag();
-	void AddDeath();
-	void AddSuicide();
-	void SetPlayerName(FName NewName);
+	void StartRespawnTimer();
+	void SetPawnToSpawn(TSubclassOf<AFPSCharacter> ClassToSpawn);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	FName PlayerName;
-	void SendScoreToGM();
-	TWeakObjectPtr<AFPSGameMode> GM;
+	void RespawnPlayer();
+	TSubclassOf<AFPSCharacter> PawnToSpawn;
 };

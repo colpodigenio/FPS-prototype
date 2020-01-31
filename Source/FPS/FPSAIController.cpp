@@ -4,11 +4,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "FPSGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Components/ScoreHandlingComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "RespawnPoint.h"
+#include "FPSCharacter.h"
+#include "Components/ControllerComponentsContainer.h"
 
 AFPSAIController::AFPSAIController()
 {
-	ScoreHandlingComponent = CreateDefaultSubobject<UScoreHandlingComponent>(TEXT("ScoreHandlingComponent"));
+	ContrCompContainer = CreateDefaultSubobject<UControllerComponentsContainer>(TEXT("ControllerComponentsContainer"));
 }
 
 void AFPSAIController::BeginPlay()

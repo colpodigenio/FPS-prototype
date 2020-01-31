@@ -8,6 +8,7 @@
 
 class AFPSCharacter;
 class UScoreHandlingComponent;
+class UControllerComponentsContainer;
 
 UCLASS()
 class FPS_API AFPSPlayerController : public APlayerController
@@ -17,17 +18,15 @@ class FPS_API AFPSPlayerController : public APlayerController
 public:
 
 	AFPSPlayerController();
-	FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
+	//FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
+	FORCEINLINE UControllerComponentsContainer* GetControllerComponentsContainer() const { return ContrCompContainer; };
 	void SpawnAndPossesSpectator();
-	void StartRespawnTimer();
-
-protected:
-	UPROPERTY(EditDefaultsOnly, meta = (BlueprintProtected = "true"))
-	TSubclassOf<AFPSCharacter> PawnToSpawn;
 
 private:
-
+	
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+// 	UScoreHandlingComponent* ScoreHandlingComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UScoreHandlingComponent* ScoreHandlingComponent;
-	void RespawnPlayer();
+	UControllerComponentsContainer* ContrCompContainer;
+	
 };

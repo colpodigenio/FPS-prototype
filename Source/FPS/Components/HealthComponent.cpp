@@ -5,6 +5,8 @@
 #include "FPS.h"
 #include "GameFramework/Controller.h"
 #include "ScoreHandlingComponent.h"
+#include "ControllerComponentsContainer.h"
+#include "RespawnComponent.h"
 #include "FPSAIController.h"
 #include "FPSPlayerController.h"
 
@@ -111,22 +113,24 @@ void UHealthComponent::Die()
 
 void UHealthComponent::ChangeScore(AController* TargetController)
 {
+	AController* ThisController = Cast<APawn>(GetOwner())->GetController();
+	UControllerComponentsContainer* TargContrCompContainer = Cast<UControllerComponentsContainer>(TargetController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
+	UControllerComponentsContainer* ThisContrCompContainer = Cast<UControllerComponentsContainer>(ThisController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
 	if (TargetController != Cast<APawn>(GetOwner())->GetController())
-		Cast<UScoreHandlingComponent>(TargetController->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddFrag();
+		TargContrCompContainer->GetScoreHandlingComponent()->AddFrag();
 	else
-		Cast<UScoreHandlingComponent>(TargetController->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddSuicide();
-	Cast<UScoreHandlingComponent>(Cast<APawn>(GetOwner())->GetController()->FindComponentByClass(UScoreHandlingComponent::StaticClass()))->AddDeath();
+		TargContrCompContainer->GetScoreHandlingComponent()->AddSuicide();
+	ThisContrCompContainer->GetScoreHandlingComponent()->AddDeath();
 }
 
 void UHealthComponent::ForceControllerUnpossesPawn()
 {
+	AController* ThisController = Cast<AController>(Cast<APawn>(GetOwner())->GetController());
 	if (Cast<AFPSAIController>(Cast<APawn>(GetOwner())->GetController()))
-		Cast<APawn>(GetOwner())->GetController()->UnPossess();
+		ThisController->UnPossess();
 	else
-	{
-		AFPSPlayerController* PC = Cast<AFPSPlayerController>(Cast<APawn>(GetOwner())->GetController());
-		PC->SpawnAndPossesSpectator();
-		PC->StartRespawnTimer();
-	}
+		Cast<AFPSPlayerController>(ThisController)->SpawnAndPossesSpectator();
+	UControllerComponentsContainer* ContrCompContainer = Cast<UControllerComponentsContainer>(ThisController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
+	ContrCompContainer->GetRespawnComponent()->StartRespawnTimer();
 }
 

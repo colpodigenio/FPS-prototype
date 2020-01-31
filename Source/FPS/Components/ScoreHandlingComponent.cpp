@@ -50,6 +50,11 @@ void UScoreHandlingComponent::AddSuicide()
 	Score.Suicides++;
 }
 
+void UScoreHandlingComponent::SetPlayerName(FName NewName)
+{
+	PlayerName = NewName;
+}
+
 void UScoreHandlingComponent::SendScoreToGM()
 {
 	Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);

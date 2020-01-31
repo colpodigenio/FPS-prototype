@@ -7,7 +7,8 @@
 #include "FPS.h"
 #include "FPSAIController.generated.h"
 
-class UScoreHandlingComponent;
+class UControllerComponentsContainer;
+class AFPSCharacter;
 
 UCLASS()
 class FPS_API AFPSAIController : public AAIController
@@ -21,14 +22,13 @@ public:
 	virtual void UpdateControlRotation(float DeltaTime, bool bUpdatePawn = true) override;
 	FRotator AimingDeviation;
 	virtual void Tick(float DeltaTime) override;
-	FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
-
+	FORCEINLINE UControllerComponentsContainer* GetControllerComponentsContainer() const { return ContrCompContainer; };
 protected:
 
 	virtual void BeginPlay() override;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UScoreHandlingComponent* ScoreHandlingComponent;
+	UControllerComponentsContainer* ContrCompContainer;
 	void SetRandomAimingDeviation();
 };

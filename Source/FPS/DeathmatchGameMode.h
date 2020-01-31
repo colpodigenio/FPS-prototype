@@ -17,8 +17,4 @@ public:
 	ADeathmatchGameMode();
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TMap<FName, FDeathmatchScore> ScoreBoard;
-
-private:
-
-	
 };
