@@ -16,9 +16,6 @@ UScoreHandlingComponent::UScoreHandlingComponent()
 void UScoreHandlingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-// 	if(GetOwner()->IsValidLowLevel())
-// 	PlayerName = *GetOwner()->GetName();
 	
 	SetPlayerNameInGM();	
 	Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);
@@ -38,16 +35,24 @@ void UScoreHandlingComponent::SetPlayerNameInGM()
 void UScoreHandlingComponent::AddFrag()
 {
 	Score.Frags++;
+	CalculateScore(20);
 }
 
 void UScoreHandlingComponent::AddDeath()
 {
 	Score.Deaths++;
+	CalculateScore(-5);
 }
 
 void UScoreHandlingComponent::AddSuicide()
 {
 	Score.Suicides++;
+	CalculateScore(-5);
+}
+
+void UScoreHandlingComponent::CalculateScore(int32 ScoreDelta)
+{
+	Score.Score += ScoreDelta;
 }
 
 void UScoreHandlingComponent::SetPlayerName(FName NewName)

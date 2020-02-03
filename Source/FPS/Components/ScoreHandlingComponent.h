@@ -32,5 +32,6 @@ protected:
 private:
 	FName PlayerName;
 	void SendScoreToGM();
+	void CalculateScore(int32 ScoreDelta);
 	TWeakObjectPtr<AFPSGameMode> GM;
 };

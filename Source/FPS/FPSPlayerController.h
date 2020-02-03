@@ -18,15 +18,11 @@ class FPS_API AFPSPlayerController : public APlayerController
 public:
 
 	AFPSPlayerController();
-	//FORCEINLINE UScoreHandlingComponent* GetScoreHandlingComp() const { return ScoreHandlingComponent; };
 	FORCEINLINE UControllerComponentsContainer* GetControllerComponentsContainer() const { return ContrCompContainer; };
 	void SpawnAndPossesSpectator();
 
 private:
 	
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-// 	UScoreHandlingComponent* ScoreHandlingComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UControllerComponentsContainer* ContrCompContainer;
-	
+	UControllerComponentsContainer* ContrCompContainer;	
 };

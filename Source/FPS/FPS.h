@@ -74,20 +74,22 @@ struct FDeathmatchScore
 	GENERATED_BODY()
 
 	FDeathmatchScore()
-		: Frags(0), Deaths(0), Suicides(0) {}
+		: Frags(0), Deaths(0), Suicides(0), Score(0) {}
 
-// 	FDeathmatchScore(const FDeathmatchScore& OtherScore)
-// 		: Frags(OtherScore.Frags), Deaths(OtherScore.Deaths), Suicides(OtherScore.Suicides), Score(OtherScore.Score) {	}
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 Frags;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 Deaths;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 Suicides;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Score;
+};
 
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-// 	float Accuracy;
-// 	UPROPERTY(BlueprintReadOnly)
-// 	EWeaponType FavouriteWeapon;
+USTRUCT(BlueprintType)
+struct FPlayerProfileData
+{
+	GENERATED_BODY()
+
+
 };

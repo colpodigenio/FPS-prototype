@@ -14,7 +14,6 @@
 
 AFPSPlayerController::AFPSPlayerController()
 {
-	//ScoreHandlingComponent = CreateDefaultSubobject<UScoreHandlingComponent>(TEXT("ScoreHandlingComponent"));
 	ContrCompContainer = CreateDefaultSubobject<UControllerComponentsContainer>(TEXT("ControllerComponentsContainer"));
 }
 
