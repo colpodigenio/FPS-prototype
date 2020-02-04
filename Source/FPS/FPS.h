@@ -76,13 +76,13 @@ struct FDeathmatchScore
 	FDeathmatchScore()
 		: Frags(0), Deaths(0), Suicides(0), Score(0) {}
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 Frags;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 Deaths;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 Suicides;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 Score;
 };
 
@@ -91,5 +91,8 @@ struct FPlayerProfileData
 {
 	GENERATED_BODY()
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FName PlayerName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UTexture2D* PlayerPicture;
 };

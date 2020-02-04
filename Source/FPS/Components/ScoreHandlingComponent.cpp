@@ -17,8 +17,8 @@ void UScoreHandlingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetPlayerNameInGM();	
-	Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);
+	SetPlayerNameInGM();
+	SendScoreToGM();
 }
 
 void UScoreHandlingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -29,7 +29,8 @@ void UScoreHandlingComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UScoreHandlingComponent::SetPlayerNameInGM()
 {
-	GM->PlayersNames.Add(PlayerName);
+	if(GM->IsValidLowLevel())
+		GM->PlayersNames.Add(PlayerName);
 }
 
 void UScoreHandlingComponent::AddFrag()
@@ -62,7 +63,8 @@ void UScoreHandlingComponent::SetPlayerName(FName NewName)
 
 void UScoreHandlingComponent::SendScoreToGM()
 {
-	Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);
+	if (Cast<ADeathmatchGameMode>(GM)->IsValidLowLevel())
+		Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);
 }
 
 
