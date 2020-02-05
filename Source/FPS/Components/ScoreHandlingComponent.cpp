@@ -5,6 +5,7 @@
 #include "FPSGameMode.h"
 #include "FPS.h"
 #include "DeathmatchGameMode.h"
+#include "FPSPlayerController.h"
 
 UScoreHandlingComponent::UScoreHandlingComponent()
 {
@@ -29,31 +30,35 @@ void UScoreHandlingComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UScoreHandlingComponent::SetPlayerNameInGM()
 {
-	if(GM->IsValidLowLevel())
+	if (GM->IsValidLowLevel())
+	{
 		GM->PlayersNames.Add(PlayerName);
+		if (Cast<AFPSPlayerController>(this))
+			GM->HumanPlayerName = PlayerName;
+	}
 }
 
 void UScoreHandlingComponent::AddFrag()
 {
-	Score.Frags++;
+	PlayerData.DMScore.Frags++;
 	CalculateScore(20);
 }
 
 void UScoreHandlingComponent::AddDeath()
 {
-	Score.Deaths++;
+	PlayerData.DMScore.Deaths++;
 	CalculateScore(-5);
 }
 
 void UScoreHandlingComponent::AddSuicide()
 {
-	Score.Suicides++;
+	PlayerData.DMScore.Suicides++;
 	CalculateScore(-5);
 }
 
 void UScoreHandlingComponent::CalculateScore(int32 ScoreDelta)
 {
-	Score.Score += ScoreDelta;
+	PlayerData.DMScore.Score += ScoreDelta;
 }
 
 void UScoreHandlingComponent::SetPlayerName(FName NewName)
@@ -64,7 +69,7 @@ void UScoreHandlingComponent::SetPlayerName(FName NewName)
 void UScoreHandlingComponent::SendScoreToGM()
 {
 	if (Cast<ADeathmatchGameMode>(GM)->IsValidLowLevel())
-		Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, Score);
+		Cast<ADeathmatchGameMode>(GM)->ScoreBoard.Add(PlayerName, PlayerData.DMScore);
 }
 
 

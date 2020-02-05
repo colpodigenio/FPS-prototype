@@ -24,6 +24,8 @@ public:
 	void AddFrag();
 	void AddDeath();
 	void AddSuicide();
+	FORCEINLINE FName GetPlayerName() const { return PlayerName; };
+	FORCEINLINE FPlayerProfileData GetPlayerData() const { return PlayerData; };
 	void SetPlayerName(FName NewName);
 
 protected:
@@ -31,7 +33,7 @@ protected:
 
 private:
 	FName PlayerName;
-	FPlayerProfileData ProfileData;
+	FPlayerProfileData PlayerData;
 	void SendScoreToGM();
 	void CalculateScore(int32 ScoreDelta);
 	TWeakObjectPtr<AFPSGameMode> GM;

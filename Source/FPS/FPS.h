@@ -92,7 +92,25 @@ struct FPlayerProfileData
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	FName PlayerName;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UTexture2D* PlayerPicture;
+	int32 PictureID;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FDeathmatchScore DMScore;
+	FPlayerProfileData operator+(const FPlayerProfileData& GameData)
+	{
+		FPlayerProfileData sum;
+		sum.DMScore.Deaths = DMScore.Frags + GameData.DMScore.Frags;
+		sum.DMScore.Frags = DMScore.Deaths + GameData.DMScore.Deaths;
+		sum.DMScore.Suicides = DMScore.Suicides + GameData.DMScore.Suicides;
+		sum.DMScore.Score = DMScore.Score + GameData.DMScore.Score;
+		return sum;
+	}
+	FPlayerProfileData operator+=(const FPlayerProfileData& GameData)
+	{
+		FPlayerProfileData sum;
+		sum.DMScore.Deaths = DMScore.Frags + GameData.DMScore.Frags;
+		sum.DMScore.Frags = DMScore.Deaths + GameData.DMScore.Deaths;
+		sum.DMScore.Suicides = DMScore.Suicides + GameData.DMScore.Suicides;
+		sum.DMScore.Score = DMScore.Score + GameData.DMScore.Score;
+		return sum;
+	}
 };

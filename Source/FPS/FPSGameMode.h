@@ -21,4 +21,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FName> PlayersNames;
+
+	FName HumanPlayerName;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

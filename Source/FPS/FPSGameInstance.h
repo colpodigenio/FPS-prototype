@@ -16,6 +16,8 @@ class FPS_API UFPSGameInstance : public UGameInstance
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	TMap<FName, FPlayerProfileData> PlayerProfileData;
+	TMap<FName, FPlayerProfileData> PlayersProfileData;
 	virtual void Init() override;
+	UPROPERTY(BlueprintReadWrite)
+	FName ChosenPlayerProfile;
 };

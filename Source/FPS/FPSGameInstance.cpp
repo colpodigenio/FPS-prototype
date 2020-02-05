@@ -8,5 +8,5 @@ void UFPSGameInstance::Init()
 {
 	Super::Init();
 	if(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0)->IsValidLowLevel())
-		PlayerProfileData = Cast<UFPSProfileSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0))->PlayerProfileData;
+		PlayersProfileData = Cast<UFPSProfileSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0))->PlayerProfileData;
 }

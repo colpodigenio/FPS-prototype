@@ -3,6 +3,10 @@
 #include "FPSGameMode.h"
 #include "Pickup.h"
 #include "Kismet/GameplayStatics.h"
+#include "FPSGameInstance.h"
+#include "Components/ControllerComponentsContainer.h"
+#include "Components/ScoreHandlingComponent.h"
+#include "FPSPlayerController.h"
 
 AFPSGameMode::AFPSGameMode()
 {
@@ -17,5 +21,14 @@ AFPSGameMode::AFPSGameMode()
 	}
 
 	BotDifficulty = EBotDifficulty::Easy;
+}
+
+void AFPSGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	auto GameInstance = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	auto PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	auto PlayerProfileData = GameInstance->PlayersProfileData.FindRef(HumanPlayerName);
+	PlayerProfileData += PC->GetControllerComponentsContainer()->GetScoreHandlingComponent()->GetPlayerData();
 }
 
