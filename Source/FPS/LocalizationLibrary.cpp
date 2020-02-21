@@ -3,7 +3,7 @@
 
 #include "LocalizationLibrary.h"
 
-void ULocalizationLibrary::ChangeLanguage(const FString &Target)
+void ULocalizationLibrary::ChangeLanguage(const FString& Target)
 {
 	FInternationalization::Get().SetCurrentCulture(Target);
 }

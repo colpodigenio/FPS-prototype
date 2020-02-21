@@ -16,5 +16,12 @@ public:
 
 	ADeathmatchGameMode();
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TMap<FName, FDeathmatchScore> ScoreBoard;
+	TMap<FString, FDeathmatchScore> ScoreBoard;
+	FORCEINLINE int32 GetPointsToWin() const { return PointsToWin; };
+	void EndMatch(FString WinnerName);
+	void ReturnToLobby();
+
+private:
+
+	int32 PointsToWin;
 };

@@ -7,6 +7,10 @@
 void UFPSGameInstance::Init()
 {
 	Super::Init();
-	if(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0)->IsValidLowLevel())
-		PlayersProfileData = Cast<UFPSProfileSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0))->PlayerProfileData;
+	UFPSProfileSave* ProfileSave = Cast<UFPSProfileSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0));
+	if (ProfileSave->IsValidLowLevel())
+	{
+		PlayersProfileData = ProfileSave->PlayerProfileData;
+		ChosenPlayerName = ProfileSave->LastChosenPlayerName;
+	}
 }

@@ -20,7 +20,11 @@ public:
 	AFPSPlayerController();
 	FORCEINLINE UControllerComponentsContainer* GetControllerComponentsContainer() const { return ContrCompContainer; };
 	void SpawnAndPossesSpectator();
-
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ShowScoreboard();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void HideScoreboard();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

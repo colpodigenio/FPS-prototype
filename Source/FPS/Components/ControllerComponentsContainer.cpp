@@ -16,7 +16,7 @@ void UControllerComponentsContainer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ScoreHandlingComp->SetPlayerName(PlayerName);
+	//ScoreHandlingComp->SetPlayerName(PlayerName);
 	RespawnComp->SetPawnToSpawn(PawnToSpawn);
 }
 

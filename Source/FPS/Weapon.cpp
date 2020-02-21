@@ -67,7 +67,8 @@ void AWeapon::RecoilTimelineCallback(float Value)
 {
 	AFPSCharacter* Player = Cast<AFPSCharacter>(GetOwner());
 	RecoilValue = DefaultRecoilValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()) / WeaponTimeline->GetTimelineLength();
-	Player->AddControllerPitchInput(RecoilValue);
+	if(Player->IsValidLowLevel())
+		Player->AddControllerPitchInput(RecoilValue);
 }
 
 void AWeapon::RecoilTimelineFinish()
@@ -101,11 +102,13 @@ void AWeapon::ShotProjectile()
 	FVector NoiseLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(400.0f, 400.0f, 50.0f));
 	UAISense_Hearing::ReportNoiseEvent(GetWorld(), NoiseLocation, 1.f, GetOwner(), 5000.0f);
 	ensureMsgf(SpawnParams.Owner, TEXT("When shooting this projectile you should set the firing weapon as an owner in FActorSpawnParameters"));
-	FVector PawnCameraLocation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraLocation();
-	FVector PawnForwardVector = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraForwardVector();
-	FRotator PawnCameraRotation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraRotation();
-	GetWorld()->SpawnActor<AProjectile>(ProjectileType, PawnCameraLocation + 50 * PawnForwardVector, PawnCameraRotation, SpawnParams);
-	
+	if (Cast<AFPSCharacter>(GetOwner())->IsValidLowLevel())
+	{
+		FVector PawnCameraLocation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraLocation();
+		FVector PawnForwardVector = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraForwardVector();
+		FRotator PawnCameraRotation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraRotation();
+		GetWorld()->SpawnActor<AProjectile>(ProjectileType, PawnCameraLocation + 50 * PawnForwardVector, PawnCameraRotation, SpawnParams);
+	}
 }
 
 void AWeapon::BeginPlay()
@@ -137,11 +140,6 @@ void AWeapon::StopFire()
 {
 	if(GetWorldTimerManager().IsTimerActive(FireTimer))
 		GetWorldTimerManager().ClearTimer(FireTimer);
-}
-
-void AWeapon::Aim()
-{
-	UE_LOG(LogTemp, Warning, TEXT("%s Aims"), *GetName())
 }
 
 void AWeapon::StartReload()

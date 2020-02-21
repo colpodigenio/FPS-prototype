@@ -23,6 +23,7 @@ public:
 	FRotator AimingDeviation;
 	virtual void Tick(float DeltaTime) override;
 	FORCEINLINE UControllerComponentsContainer* GetControllerComponentsContainer() const { return ContrCompContainer; };
+	static int32 BotCount;
 protected:
 
 	virtual void BeginPlay() override;

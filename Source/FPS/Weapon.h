@@ -27,7 +27,6 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Fire"))
 	virtual void StartFire();
 	virtual void StopFire();
-	virtual void Aim();
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Reload"))
 	virtual void StartReload();
 	virtual bool TryApplyToCharacter(AFPSCharacter* Character) override;

@@ -9,6 +9,8 @@
 #include "FPSCharacter.h"
 #include "Components/ControllerComponentsContainer.h"
 
+int32 AFPSAIController::BotCount = 0;
+
 AFPSAIController::AFPSAIController()
 {
 	ContrCompContainer = CreateDefaultSubobject<UControllerComponentsContainer>(TEXT("ControllerComponentsContainer"));

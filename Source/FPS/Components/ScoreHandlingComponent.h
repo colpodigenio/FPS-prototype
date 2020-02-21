@@ -24,15 +24,16 @@ public:
 	void AddFrag();
 	void AddDeath();
 	void AddSuicide();
-	FORCEINLINE FName GetPlayerName() const { return PlayerName; };
+	FORCEINLINE FString GetPlayerName() const { return PlayerName; };
 	FORCEINLINE FPlayerProfileData GetPlayerData() const { return PlayerData; };
-	void SetPlayerName(FName NewName);
+	void SetPlayerName(FString NewName);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	FName PlayerName;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FString PlayerName;
 	FPlayerProfileData PlayerData;
 	void SendScoreToGM();
 	void CalculateScore(int32 ScoreDelta);

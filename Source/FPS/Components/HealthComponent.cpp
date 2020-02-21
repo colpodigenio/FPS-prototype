@@ -59,7 +59,7 @@ void UHealthComponent::ApplyDamage(int32 DamageDelta, AController* DamageInstiga
 	if (Health <= 0)
 	{
 		ChangeScore(DamageInstigator);		
-		ForceControllerUnpossesPawn();
+		ForceControllerUnpossesPawn();		
 		Die();
 	}
 }
@@ -113,6 +113,8 @@ void UHealthComponent::Die()
 
 void UHealthComponent::ChangeScore(AController* TargetController)
 {
+	if (!TargetController->IsValidLowLevel())
+		return;
 	AController* ThisController = Cast<APawn>(GetOwner())->GetController();
 	UControllerComponentsContainer* TargContrCompContainer = Cast<UControllerComponentsContainer>(TargetController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
 	UControllerComponentsContainer* ThisContrCompContainer = Cast<UControllerComponentsContainer>(ThisController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
@@ -126,10 +128,13 @@ void UHealthComponent::ChangeScore(AController* TargetController)
 void UHealthComponent::ForceControllerUnpossesPawn()
 {
 	AController* ThisController = Cast<AController>(Cast<APawn>(GetOwner())->GetController());
-	if (Cast<AFPSAIController>(Cast<APawn>(GetOwner())->GetController()))
+	if (Cast<AFPSAIController>(ThisController))
 		ThisController->UnPossess();
 	else
+	{
+		PRINT("%s my health is %i", *GetOwner()->GetName(), Health)
 		Cast<AFPSPlayerController>(ThisController)->SpawnAndPossesSpectator();
+	}
 	UControllerComponentsContainer* ContrCompContainer = Cast<UControllerComponentsContainer>(ThisController->FindComponentByClass(UControllerComponentsContainer::StaticClass()));
 	ContrCompContainer->GetRespawnComponent()->StartRespawnTimer();
 }

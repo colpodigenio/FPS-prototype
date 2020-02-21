@@ -20,9 +20,8 @@ public:
 	TEnumAsByte<EBotDifficulty::Type> BotDifficulty;
 
 	UPROPERTY(BlueprintReadOnly)
-	TArray<FName> PlayersNames;
+	TArray<FString> PlayersNames;
 
-	FName HumanPlayerName;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	UPROPERTY(BlueprintReadOnly)
+	FString HumanPlayerName;
 };

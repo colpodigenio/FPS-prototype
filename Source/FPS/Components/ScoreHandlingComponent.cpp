@@ -6,6 +6,8 @@
 #include "FPS.h"
 #include "DeathmatchGameMode.h"
 #include "FPSPlayerController.h"
+#include "FPSGameInstance.h"
+#include "FPSAIController.h"
 
 UScoreHandlingComponent::UScoreHandlingComponent()
 {
@@ -18,8 +20,16 @@ void UScoreHandlingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetPlayerNameInGM();
 	SendScoreToGM();
+	if (Cast<AFPSPlayerController>(GetOwner()))
+		PlayerName = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->ChosenPlayerName;
+	else
+	{
+		Cast<AFPSAIController>(GetOwner())->BotCount++;
+		PlayerName = TEXT("Bot");
+		PlayerName.Append(FString::FromInt(Cast<AFPSAIController>(GetOwner())->BotCount));
+	}
+	SetPlayerNameInGM();
 }
 
 void UScoreHandlingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -33,7 +43,7 @@ void UScoreHandlingComponent::SetPlayerNameInGM()
 	if (GM->IsValidLowLevel())
 	{
 		GM->PlayersNames.Add(PlayerName);
-		if (Cast<AFPSPlayerController>(this))
+		if (Cast<AFPSPlayerController>(GetOwner()))
 			GM->HumanPlayerName = PlayerName;
 	}
 }
@@ -59,9 +69,11 @@ void UScoreHandlingComponent::AddSuicide()
 void UScoreHandlingComponent::CalculateScore(int32 ScoreDelta)
 {
 	PlayerData.DMScore.Score += ScoreDelta;
+	if (PlayerData.DMScore.Score >= Cast<ADeathmatchGameMode>(GM)->GetPointsToWin())
+		Cast<ADeathmatchGameMode>(GM)->EndMatch(PlayerName);
 }
 
-void UScoreHandlingComponent::SetPlayerName(FName NewName)
+void UScoreHandlingComponent::SetPlayerName(FString NewName)
 {
 	PlayerName = NewName;
 }

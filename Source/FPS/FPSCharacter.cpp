@@ -43,6 +43,7 @@ AFPSCharacter::AFPSCharacter(const FObjectInitializer& ObjectInitializer)
 	bIsStrafing = false;
 	bIsSprinting = false;
 	bIsNotMovingBackwards = true;
+	bIsZooming = false;
 
 	InventorySocketName = TEXT("InventorySocket");
 
@@ -60,16 +61,13 @@ void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Zoom();
 	Sprint(DeltaTime);
 	RestoreStamina(DeltaTime);
 
 	auto Location = GetActorLocation();
 	float Speed = (Location - LastLocation).Size();
-	//UE_LOG(LogTemp, Warning, TEXT("Stamina  = %f"), Stamina)
-	//UE_LOG(LogTemp, Warning, TEXT("Speed  = %f"), Speed/DeltaTime)
 	LastLocation = GetActorLocation();
-
-
 }
 
 void AFPSCharacter::OnConstruction(const FTransform& Transform)
@@ -94,7 +92,8 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSCharacter::EndSprint);
 	PlayerInputComponent->BindAction("ToggleWalkRun", IE_Pressed, this, &AFPSCharacter::ToggleWalkRun);
-	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &AFPSCharacter::Zoom);
+	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &AFPSCharacter::StartZoom);
+	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &AFPSCharacter::EndZoom);
 	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AFPSCharacter::ReloadWeapon);
 	PlayerInputComponent->BindAction("UseExplosive", IE_Pressed, this, &AFPSCharacter::UseExplosive);
 	PlayerInputComponent->BindAction("ShowHideScore", IE_Pressed, this, &AFPSCharacter::ShowScore);
@@ -198,6 +197,23 @@ void AFPSCharacter::ToggleWalkRun()
 	}
 }
 
+void AFPSCharacter::StartZoom()
+{
+	bIsZooming = true;
+}
+
+void AFPSCharacter::Zoom()
+{
+	float TargetFoV = bIsZooming ? 60.0f : 90.0f;
+	float NewFoV = UKismetMathLibrary::FInterpTo(FPSCamera->FieldOfView, TargetFoV, GetWorld()->GetDeltaSeconds(), 15.0f);
+	FPSCamera->FieldOfView = NewFoV;
+}
+
+void AFPSCharacter::EndZoom()
+{
+	bIsZooming = false;
+}
+
 void AFPSCharacter::StartFiringWeapon()
 {
 	if (CurrentWeapon)
@@ -208,12 +224,6 @@ void AFPSCharacter::StopFiringWeapon()
 {
 	if (CurrentWeapon)
 		CurrentWeapon->StopFire();
-}
-
-void AFPSCharacter::Zoom()
-{
-	if (CurrentWeapon)
-		CurrentWeapon->Aim();
 }
 
 void AFPSCharacter::ReloadWeapon()

@@ -35,6 +35,7 @@ public:
 	FRotator GetFPSCameraRotation() const;
 	bool IsPowerupEnabled() const;
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	FORCEINLINE UCameraComponent* GetFPSCamera() const { return FPSCamera; };
 	void EnablePowerup(EPowerupType PowerupType);
 	UFUNCTION(BlueprintPure)
 	AWeapon* GetWeaponByType(EWeaponType WeaponType);
@@ -83,6 +84,7 @@ private:
 	float StaminaMax;
 	bool bIsSprinting;
 	bool bIsNotMovingBackwards;
+	bool bIsZooming;
 	bool bIsStrafing;
 	EMovementState::Type MovementState;
 	EMovementState::Type LastMovingState;
@@ -100,7 +102,9 @@ private:
 	void RestoreStamina(float DeltaTime);
 	void EndSprint();
 	void ToggleWalkRun();
+	void StartZoom();
 	void Zoom();
+	void EndZoom();
 	void ReloadWeapon();
 	void UseExplosive();
 	void TakeAssaultRifle();
