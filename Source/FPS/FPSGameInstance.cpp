@@ -10,7 +10,7 @@ void UFPSGameInstance::Init()
 	UFPSProfileSave* ProfileSave = Cast<UFPSProfileSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Profiles"), 0));
 	if (ProfileSave->IsValidLowLevel())
 	{
-		PlayersProfileData = ProfileSave->PlayerProfileData;
+		PlayersProfileData = ProfileSave->PlayersProfileData;
 		ChosenPlayerName = ProfileSave->LastChosenPlayerName;
 	}
 }

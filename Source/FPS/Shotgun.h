@@ -6,9 +6,6 @@
 #include "Weapon.h"
 #include "Shotgun.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class FPS_API AShotgun : public AWeapon
 {

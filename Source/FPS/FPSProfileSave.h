@@ -16,7 +16,7 @@ class FPS_API UFPSProfileSave : public USaveGame
 public:
 
 	UPROPERTY(BlueprintReadWrite)
-	TMap<FString, FPlayerProfileData> PlayerProfileData;
+	TMap<FString, FPlayerProfileData> PlayersProfileData;
 	UPROPERTY(BlueprintReadWrite)
 	FString  LastChosenPlayerName;
 };

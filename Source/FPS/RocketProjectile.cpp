@@ -13,7 +13,7 @@ void ARocketProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherAct
 {
 	if(OtherComp->Mobility == EComponentMobility::Movable)
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 10.0f, GetActorLocation());
-	PlayImpactEffect(Hit.ImpactPoint, nullptr);
+	PlayImpactEffect(nullptr);
 	TArray<AActor*> AllParticipants;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFPSCharacter::StaticClass(), AllParticipants);
 	for (auto It : AllParticipants)

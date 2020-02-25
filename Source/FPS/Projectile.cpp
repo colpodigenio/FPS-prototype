@@ -56,14 +56,12 @@ void AProjectile::SetProjectileInitialVelocity()
 	if (!OwningWeapon)
 		return;
 	AFPSCharacter* OwningCharacter = Cast<AFPSCharacter>(OwningWeapon->GetOwner());
-	ProjectileMovement->Velocity = OwningCharacter->GetFPSCameraForwardVector();
+	ProjectileMovement->Velocity = GetActorForwardVector();//OwningCharacter->GetFPSCameraForwardVector();
 }
-
-#include "DrawDebugHelpers.h"
 
 void AProjectile::HitTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	PlayImpactEffect(Hit.ImpactPoint, Hit.PhysMaterial.Get());
+	PlayImpactEffect(Hit.PhysMaterial.Get());
 	AFPSCharacter* Enemy = Cast<AFPSCharacter>(OtherActor);
 	if (Enemy && Hit.PhysMaterial.Get())
 	{

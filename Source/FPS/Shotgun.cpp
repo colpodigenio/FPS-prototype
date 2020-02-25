@@ -4,6 +4,7 @@
 #include "FPS.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Projectile.h"
+#include "FPSCharacter.h"
 
 AShotgun::AShotgun()
 	: Super(FObjectInitializer::Get())
@@ -17,8 +18,8 @@ AShotgun::AShotgun()
 	FireRate = 4.0f;
 	ReloadTime = 2.5f;
 	AmountOfPelletsInShell = 12;
-	RecoilValue = -4.0f;
-	DefaultRecoilValue = -4.0f;
+	RecoilValue = -2.0f;
+	DefaultRecoilValue = -2.0f;
 }
 
 void AShotgun::ShotProjectile()
@@ -27,8 +28,8 @@ void AShotgun::ShotProjectile()
 	
 	while (i > 0)
 	{
-		FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(2.f));
-		FVector SpawnDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(GetWeaponMesh()->GetForwardVector(), 10.f);
+		FVector SpawnLocation = Cast<AFPSCharacter>(GetOwner())->GetFPSCameraLocation() + 50.0f * Cast<AFPSCharacter>(GetOwner())->GetFPSCameraForwardVector();//UKismetMathLibrary::RandomPointInBoundingBox(GetWeaponMesh()->GetSocketLocation(TEXT("Muzzle")), FVector(2.f));
+		FVector SpawnDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(Cast<AFPSCharacter>(GetOwner())->GetFPSCameraForwardVector(), 5.f);
 		FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, SpawnLocation + SpawnDirection);
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

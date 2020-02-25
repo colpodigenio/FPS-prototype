@@ -88,8 +88,8 @@ struct FDeathmatchScore
 	FDeathmatchScore operator+(const FDeathmatchScore& GameData)
 	{
 		FDeathmatchScore sum;
-		sum.Deaths = Frags + GameData.Frags;
-		sum.Frags = Deaths + GameData.Deaths;
+		sum.Frags = Frags + GameData.Frags;
+		sum.Deaths = Deaths + GameData.Deaths;
 		sum.Suicides = Suicides + GameData.Suicides;
 		sum.Score = Score + GameData.Score;
 		return sum;
@@ -97,8 +97,8 @@ struct FDeathmatchScore
 	FDeathmatchScore operator+=(const FDeathmatchScore& GameData)
 	{
 		FDeathmatchScore sum;
-		sum.Deaths = Frags + GameData.Frags;
-		sum.Frags = Deaths + GameData.Deaths;
+		sum.Frags = Frags + GameData.Frags;
+		sum.Deaths = Deaths + GameData.Deaths;
 		sum.Suicides = Suicides + GameData.Suicides;
 		sum.Score = Score + GameData.Score;
 		return sum;
@@ -112,17 +112,19 @@ struct FPlayerProfileData
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 PictureID;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FDeathmatchScore DMScore;
 	FPlayerProfileData operator+(const FPlayerProfileData& GameData)
 	{
 		FPlayerProfileData sum;
+		sum.PictureID = PictureID;
 		sum.DMScore = DMScore + GameData.DMScore;
 		return sum;
 	}
 	FPlayerProfileData operator+=(const FPlayerProfileData& GameData)
 	{
 		FPlayerProfileData sum;
+		sum.PictureID = PictureID;
 		sum.DMScore = DMScore + GameData.DMScore;
 		return sum;
 	}

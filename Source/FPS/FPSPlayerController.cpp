@@ -12,6 +12,7 @@
 #include "Components/ControllerComponentsContainer.h"
 #include "Components/ScoreHandlingComponent.h"
 #include "FPSGameInstance.h"
+#include "FPSProfileSave.h"
 
 AFPSPlayerController::AFPSPlayerController()
 {
@@ -32,8 +33,13 @@ void AFPSPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	FPlayerProfileData ProfileData = GameInstance->PlayersProfileData.FindRef(PlayerName);
 		if (GameInstance->PlayersProfileData.Contains(PlayerName))
 		{
-			GameInstance->PlayersProfileData.FindRef(PlayerName) += ContrCompContainer->GetScoreHandlingComponent()->GetPlayerData();
-			PRINT("!!! %i", ProfileData.DMScore.Score)
+			FPlayerProfileData NewProfileData;
+			NewProfileData = GameInstance->PlayersProfileData.FindRef(PlayerName) + ContrCompContainer->GetScoreHandlingComponent()->GetPlayerData();
+			GameInstance->PlayersProfileData.Add(PlayerName) = NewProfileData;
+			UFPSProfileSave* ProfileSave = Cast<UFPSProfileSave>(UGameplayStatics::CreateSaveGameObject(UFPSProfileSave::StaticClass()));
+			ProfileSave->PlayersProfileData = GameInstance->PlayersProfileData;
+			ProfileSave->LastChosenPlayerName = GameInstance->ChosenPlayerName;
+			UGameplayStatics::SaveGameToSlot(ProfileSave, TEXT("Profiles"), 0);
 				// 		GameInstance->PlayersProfileData.FindRef(HumanPlayerName).DMScore.Score = GameInstance->PlayersProfileData.FindRef(HumanPlayerName).DMScore.Score
 				// 			+ PC->GetControllerComponentsContainer()->GetScoreHandlingComponent()->GetPlayerData().DMScore.Score;
 		}

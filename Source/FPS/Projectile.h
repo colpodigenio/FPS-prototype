@@ -23,7 +23,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	AController* DamageInstigator;
 	UFUNCTION(BlueprintImplementableEvent)
-	void PlayImpactEffect(FVector ImpactPoint, UPhysicalMaterial* ImpactPhysMat);
+	void PlayImpactEffect(UPhysicalMaterial* ImpactPhysMat);
 
 protected:
 
