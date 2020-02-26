@@ -40,9 +40,6 @@ void AFPSPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			ProfileSave->PlayersProfileData = GameInstance->PlayersProfileData;
 			ProfileSave->LastChosenPlayerName = GameInstance->ChosenPlayerName;
 			UGameplayStatics::SaveGameToSlot(ProfileSave, TEXT("Profiles"), 0);
-				// 		GameInstance->PlayersProfileData.FindRef(HumanPlayerName).DMScore.Score = GameInstance->PlayersProfileData.FindRef(HumanPlayerName).DMScore.Score
-				// 			+ PC->GetControllerComponentsContainer()->GetScoreHandlingComponent()->GetPlayerData().DMScore.Score;
 		}
-
 }
 

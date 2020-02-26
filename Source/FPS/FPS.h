@@ -112,12 +112,19 @@ struct FPlayerProfileData
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 PictureID;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FDeathmatchScore DMScore;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 DeathmatchesWon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 DeathmatchesLost;
+	
 	FPlayerProfileData operator+(const FPlayerProfileData& GameData)
 	{
 		FPlayerProfileData sum;
 		sum.PictureID = PictureID;
+		sum.DeathmatchesWon = DeathmatchesWon + GameData.DeathmatchesWon;
+		sum.DeathmatchesLost = DeathmatchesLost + GameData.DeathmatchesLost;
 		sum.DMScore = DMScore + GameData.DMScore;
 		return sum;
 	}
@@ -125,6 +132,8 @@ struct FPlayerProfileData
 	{
 		FPlayerProfileData sum;
 		sum.PictureID = PictureID;
+		sum.DeathmatchesWon = DeathmatchesWon + GameData.DeathmatchesWon;
+		sum.DeathmatchesLost = DeathmatchesLost + GameData.DeathmatchesLost;
 		sum.DMScore = DMScore + GameData.DMScore;
 		return sum;
 	}

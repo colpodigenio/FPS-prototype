@@ -2,6 +2,7 @@
 
 #include "ScoreHandlingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/ControllerComponentsContainer.h"
 #include "FPSGameMode.h"
 #include "FPS.h"
 #include "DeathmatchGameMode.h"
