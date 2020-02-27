@@ -7,6 +7,7 @@
 #include "RespawnPoint.h"
 #include "FPSCharacter.h"
 #include "FPS.h"
+#include "GameFramework/GameModeBase.h"
 #include "GameFramework/Controller.h"
 
 URespawnComponent::URespawnComponent()
@@ -54,7 +55,7 @@ void URespawnComponent::RespawnPlayer()
 			Cast<AFPSCharacter>(OverlappingActor)->ReceiveDamage(1000, Cast<AController>(GetOwner()));
 		}
 	}
-	AFPSCharacter* NewPawn = GetWorld()->SpawnActor<AFPSCharacter>(PawnToSpawn, RespawnPoints[PlayerStartIndex]->GetActorTransform(), SpawnParams);
+	AFPSCharacter* NewPawn = GetWorld()->SpawnActor<AFPSCharacter>(UGameplayStatics::GetGameMode(GetOwner())->DefaultPawnClass, RespawnPoints[PlayerStartIndex]->GetActorTransform(), SpawnParams);
 	Cast<AController>(GetOwner())->Possess(NewPawn);
 }
 

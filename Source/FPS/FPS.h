@@ -138,3 +138,14 @@ struct FPlayerProfileData
 		return sum;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FMapData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 MaxNumberOfPlayers;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* MapPicture;
+};

@@ -22,6 +22,6 @@ public:
 	void ReturnToLobby();
 
 private:
-
+	UPROPERTY(EditDefaultsOnly, Category = "Rules", meta = (AllowPrivateAccess = "true"))
 	int32 PointsToWin;
 };

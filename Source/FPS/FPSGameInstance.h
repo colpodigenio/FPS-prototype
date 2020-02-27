@@ -20,4 +20,15 @@ public:
 	virtual void Init() override;
 	UPROPERTY(BlueprintReadWrite)
 	FString ChosenPlayerName;
+	EBotDifficulty::Type GetDifficulty() const { return BotDifficulty; };
+	int32 GetNumberOfPlayers() const { return NumberOfPlayers; };
+
+private:
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TMap<FString, FMapData> MapsList;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<EBotDifficulty::Type> BotDifficulty;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 NumberOfPlayers;
 };

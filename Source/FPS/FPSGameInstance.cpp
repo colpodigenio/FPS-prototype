@@ -13,4 +13,6 @@ void UFPSGameInstance::Init()
 		PlayersProfileData = ProfileSave->PlayersProfileData;
 		ChosenPlayerName = ProfileSave->LastChosenPlayerName;
 	}
+	BotDifficulty = EBotDifficulty::Easy;
+	NumberOfPlayers = 2;
 }

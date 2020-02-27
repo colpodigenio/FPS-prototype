@@ -7,6 +7,8 @@
 #include "FPS.h"
 #include "FPSGameMode.generated.h"
 
+class AAIController;
+
 UCLASS()
 class FPS_API AFPSGameMode : public AGameModeBase
 {
@@ -16,12 +18,20 @@ public:
 
 	AFPSGameMode();
 	
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<EBotDifficulty::Type> BotDifficulty;
+	EBotDifficulty::Type BotDifficulty;
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FString> PlayersNames;
 
 	UPROPERTY(BlueprintReadOnly)
 	FString HumanPlayerName;
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	void SpawnPlayers();
+	int32 NumberOfPlayers;
+	UPROPERTY(EditAnywhere, Category = "Classes", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AAIController> AIControllerClass;
 };

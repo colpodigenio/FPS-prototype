@@ -81,6 +81,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float Stamina;	// time in seconds which character can sprint
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float StaminaMax;
 	bool bIsSprinting;
 	bool bIsNotMovingBackwards;

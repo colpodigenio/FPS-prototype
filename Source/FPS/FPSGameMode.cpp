@@ -7,6 +7,10 @@
 #include "Components/ControllerComponentsContainer.h"
 #include "Components/ScoreHandlingComponent.h"
 #include "FPSPlayerController.h"
+#include "RespawnPoint.h"
+#include "FPSCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "AIController.h"
 
 AFPSGameMode::AFPSGameMode()
 {
@@ -19,7 +23,37 @@ AFPSGameMode::AFPSGameMode()
 		Cast<APickup>(It)->PickupID = id;
 		id++;
 	}
+	AIControllerClass = AAIController::StaticClass();
+}
 
-	BotDifficulty = EBotDifficulty::Easy;
+void AFPSGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	UFPSGameInstance* GI = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GI->IsValidLowLevel())
+	{
+		BotDifficulty = GI->GetDifficulty();
+		NumberOfPlayers = GI->GetNumberOfPlayers();
+	}
+	SpawnPlayers();
+}
+
+void AFPSGameMode::SpawnPlayers()
+{
+	TArray<AActor*> RespawnPoints;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnPoint::StaticClass(), RespawnPoints);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	int32 RandInt = UKismetMathLibrary::RandomIntegerInRange(0, RespawnPoints.Num() - 1);
+	APawn* PlayerPawn = GetWorld()->SpawnActor<AFPSCharacter>(DefaultPawnClass, RespawnPoints[RandInt]->GetActorTransform(), SpawnParams);
+	RespawnPoints.RemoveAt(RandInt);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(PlayerPawn);
+	NumberOfPlayers--;
+	while (NumberOfPlayers > 0)
+	{
+		NumberOfPlayers--;
+		APawn* Pawn = GetWorld()->SpawnActor<AFPSCharacter>(DefaultPawnClass, RespawnPoints[NumberOfPlayers]->GetActorTransform(), SpawnParams);
+		GetWorld()->SpawnActor<AAIController>(AIControllerClass, RespawnPoints[NumberOfPlayers]->GetActorTransform(), SpawnParams)->Possess(Pawn);
+	}
 }
 
