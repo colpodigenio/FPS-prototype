@@ -13,4 +13,6 @@ class FPS_API ULocalizationLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable)
 	static void ChangeLanguage(const FString& Target);
+
+	
 };

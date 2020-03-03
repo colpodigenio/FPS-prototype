@@ -7,3 +7,5 @@ void ULocalizationLibrary::ChangeLanguage(const FString& Target)
 {
 	FInternationalization::Get().SetCurrentCulture(Target);
 }
+
+

@@ -107,7 +107,6 @@ private:
 	void Zoom();
 	void EndZoom();
 	void ReloadWeapon();
-	void UseExplosive();
 	void TakeAssaultRifle();
 	void TakeShotgun();
 	void TakeRocketLauncher();

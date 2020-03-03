@@ -79,28 +79,27 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("Move", this, &AFPSCharacter::Move);
-	PlayerInputComponent->BindAxis("Strafe", this, &AFPSCharacter::Strafe);
+	PlayerInputComponent->BindAxis("Move Forward", this, &AFPSCharacter::Move);
+	PlayerInputComponent->BindAxis("Move Backward", this, &AFPSCharacter::Move);
+	PlayerInputComponent->BindAxis("Strafe Right", this, &AFPSCharacter::Strafe);
+	PlayerInputComponent->BindAxis("Strafe Left", this, &AFPSCharacter::Strafe);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFPSCharacter::TryJump);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::PerformCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AFPSCharacter::PerformUnCrouch);
-	PlayerInputComponent->BindAction("FireWeapon", IE_Pressed, this, &AFPSCharacter::StartFiringWeapon);
-	PlayerInputComponent->BindAction("FireWeapon", IE_Released, this, &AFPSCharacter::StopFiringWeapon);
+	PlayerInputComponent->BindAction("Fire Weapon", IE_Pressed, this, &AFPSCharacter::StartFiringWeapon);
+	PlayerInputComponent->BindAction("Fire Weapon", IE_Released, this, &AFPSCharacter::StopFiringWeapon);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSCharacter::EndSprint);
-	PlayerInputComponent->BindAction("ToggleWalkRun", IE_Pressed, this, &AFPSCharacter::ToggleWalkRun);
+	PlayerInputComponent->BindAction("Toggle Walk/Run", IE_Pressed, this, &AFPSCharacter::ToggleWalkRun);
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &AFPSCharacter::StartZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &AFPSCharacter::EndZoom);
-	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AFPSCharacter::ReloadWeapon);
-	PlayerInputComponent->BindAction("UseExplosive", IE_Pressed, this, &AFPSCharacter::UseExplosive);
-	PlayerInputComponent->BindAction("ShowHideScore", IE_Pressed, this, &AFPSCharacter::ShowScore);
-	PlayerInputComponent->BindAction("ShowHideScore", IE_Released, this, &AFPSCharacter::HideScore);
-	PlayerInputComponent->BindAction("TakeAssaultRifle", IE_Pressed, this, &AFPSCharacter::TakeAssaultRifle);
-	PlayerInputComponent->BindAction("TakeShotgun", IE_Pressed, this, &AFPSCharacter::TakeShotgun);
-	PlayerInputComponent->BindAction("TakeRocketLauncher", IE_Pressed, this, &AFPSCharacter::TakeRocketLauncher);
+	PlayerInputComponent->BindAction("Reload Weapon", IE_Pressed, this, &AFPSCharacter::ReloadWeapon);
+	PlayerInputComponent->BindAction("Take Assault Rifle", IE_Pressed, this, &AFPSCharacter::TakeAssaultRifle);
+	PlayerInputComponent->BindAction("Take Shotgun", IE_Pressed, this, &AFPSCharacter::TakeShotgun);
+	PlayerInputComponent->BindAction("Take Rocket Launcher", IE_Pressed, this, &AFPSCharacter::TakeRocketLauncher);
 
 }
 
@@ -232,14 +231,9 @@ void AFPSCharacter::ReloadWeapon()
 		CurrentWeapon->StartReload();
 }
 
-void AFPSCharacter::UseExplosive()
-{
-	UE_LOG(LogTemp, Warning, TEXT("UseExplosive"))
-}
-
 void AFPSCharacter::TakeNewWeapon(EWeaponType NewWeaponType)
 {
-															if (!CurrentWeapon->IsReloading())
+	if (!CurrentWeapon->IsReloading())
 	{
 		CurrentWeapon->HideMesh();
 		CurrentWeapon = WeaponInventory.FindRef(NewWeaponType);
