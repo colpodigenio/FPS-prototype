@@ -35,6 +35,14 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	bFirstShotFired = false;
 	WeaponType = EWeaponType::None;
 	PickupType = EPickupType::Weapon;
+	bIsPickup = false;
+}
+
+void AWeapon::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (!GetOwner() && !bIsPickup)
+		Destroy();
 }
 
 void AWeapon::AddAmmo(int32 AmountOfMagazines)

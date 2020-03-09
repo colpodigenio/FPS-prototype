@@ -244,28 +244,19 @@ void AFPSCharacter::TakeNewWeapon(EWeaponType NewWeaponType)
 void AFPSCharacter::TakeAssaultRifle()
 {
 	if (WeaponInventory.FindRef(EWeaponType::AssaultRifle))
-	{
 		TakeNewWeapon(EWeaponType::AssaultRifle);
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
-	}
 }
 
 void AFPSCharacter::TakeShotgun()
 {
 	if (WeaponInventory.FindRef(EWeaponType::Shotgun))
-	{
 		TakeNewWeapon(EWeaponType::Shotgun);
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
-	}
 }
 
 void AFPSCharacter::TakeRocketLauncher()
 {
 	if (WeaponInventory.FindRef(EWeaponType::RocketLauncher))
-	{
 		TakeNewWeapon(EWeaponType::RocketLauncher);
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentWeapon->GetName())
-	}
 }
 
 bool AFPSCharacter::CheckIfWeaponByTypeIsEmpty(EWeaponType WeaponType)

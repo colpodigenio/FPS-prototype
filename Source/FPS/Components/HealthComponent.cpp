@@ -2,6 +2,7 @@
 
 #include "HealthComponent.h"
 #include "FPSCharacter.h"
+#include "Weapon.h"
 #include "FPS.h"
 #include "GameFramework/Controller.h"
 #include "ScoreHandlingComponent.h"
@@ -108,6 +109,7 @@ void UHealthComponent::StopRevertHealthToMaxTimer()
 void UHealthComponent::Die()
 {
 	bIsDead = true;
+	Cast<AFPSCharacter>(GetOwner())->GetCurrentWeapon()->GetWeaponMesh()->SetSimulatePhysics(true);
 	GetOwner()->Destroy();
 }
 

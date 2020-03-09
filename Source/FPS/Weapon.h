@@ -22,6 +22,8 @@ public:
 
 	AWeapon(const FObjectInitializer& ObjectInitializer);
 
+	virtual void Tick(float DeltaTime) override;
+
 	FOnTimelineFloat OnRecoilTimelineCallback;
 	FOnTimelineEventStatic OnRecoilTimelineFinish;
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Fire"))
@@ -33,7 +35,7 @@ public:
 	void AddAmmo(int32 AmountOfMagazines);
 	void ShowMesh() override;
 	void HideMesh() override;
-
+	bool bIsPickup;
 	void ChangeDamage(int32 DamageBooster);
 	bool CheckIfAmmoIsFull();
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; };

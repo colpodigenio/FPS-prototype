@@ -8,6 +8,7 @@
 #include "Components/ChildActorComponent.h"
 #include "Pickup.h"
 #include "FPSCharacter.h"
+#include "Weapon.h"
 
 APickupRespawnPoint::APickupRespawnPoint()
 {
@@ -44,6 +45,7 @@ void APickupRespawnPoint::BeginPlay()
 	Super::BeginPlay();	
 
 	ChildPickupRef = Cast<APickup>(PickupComponent->GetChildActor());
+	Cast<AWeapon>(ChildPickupRef)->bIsPickup = true;
 
  	RespawnPointCollision->OnComponentBeginOverlap.AddDynamic(this, &APickupRespawnPoint::BeginOverlap);
  	RespawnPointCollision->OnComponentEndOverlap.AddDynamic(this, &APickupRespawnPoint::EndOverlap);
