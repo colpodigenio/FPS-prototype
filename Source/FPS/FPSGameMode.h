@@ -25,9 +25,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FString HumanPlayerName;
+	bool HasMatchPlayed() const { return bHasMatchPlayed; };
 
 protected:
 	virtual void BeginPlay() override;
+
+	bool bHasMatchPlayed;
 
 private:
 	void SpawnPlayers();

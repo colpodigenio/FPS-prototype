@@ -18,6 +18,7 @@ void ADeathmatchGameMode::EndMatch(FString WinnerName)
 	UFPSGameInstance* GameInstance = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	FPlayerProfileData NewPlayerProfileData = GameInstance->PlayersProfileData.FindRef(WinnerName);
+	bHasMatchPlayed = true;
 	if (GameInstance->PlayersProfileData.Contains(WinnerName))
 		NewPlayerProfileData.DeathmatchesWon++;
 	else

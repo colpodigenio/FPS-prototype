@@ -22,6 +22,8 @@ public:
 	FString ChosenPlayerName;
 	EBotDifficulty::Type GetDifficulty() const { return BotDifficulty; };
 	int32 GetNumberOfPlayers() const { return NumberOfPlayers; };
+	UPROPERTY(BlueprintReadWrite)
+	float MouseSensitivity;
 
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
@@ -31,4 +33,5 @@ private:
 	TEnumAsByte<EBotDifficulty::Type> BotDifficulty;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 NumberOfPlayers;
+
 };

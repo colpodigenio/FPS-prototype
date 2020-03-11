@@ -5,6 +5,7 @@
 #include "FPS.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpectatorPawn.h"
+#include "GameFramework/PlayerInput.h"
 #include "RespawnPoint.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
@@ -31,15 +32,27 @@ void AFPSPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	UFPSGameInstance* GameInstance = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FString PlayerName = ContrCompContainer->GetScoreHandlingComponent()->GetPlayerName();
 	FPlayerProfileData ProfileData = GameInstance->PlayersProfileData.FindRef(PlayerName);
-		if (GameInstance->PlayersProfileData.Contains(PlayerName))
-		{
-			FPlayerProfileData NewProfileData;
-			NewProfileData = GameInstance->PlayersProfileData.FindRef(PlayerName) + ContrCompContainer->GetScoreHandlingComponent()->GetPlayerData();
-			GameInstance->PlayersProfileData.Add(PlayerName) = NewProfileData;
-			UFPSProfileSave* ProfileSave = Cast<UFPSProfileSave>(UGameplayStatics::CreateSaveGameObject(UFPSProfileSave::StaticClass()));
-			ProfileSave->PlayersProfileData = GameInstance->PlayersProfileData;
-			ProfileSave->LastChosenPlayerName = GameInstance->ChosenPlayerName;
-			UGameplayStatics::SaveGameToSlot(ProfileSave, TEXT("Profiles"), 0);
-		}
+	if (GameInstance->PlayersProfileData.Contains(PlayerName) && Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->HasMatchPlayed())
+	{
+		FPlayerProfileData NewProfileData;
+		NewProfileData = GameInstance->PlayersProfileData.FindRef(PlayerName) + ContrCompContainer->GetScoreHandlingComponent()->GetPlayerData();
+		GameInstance->PlayersProfileData.Add(PlayerName) = NewProfileData;
+		UFPSProfileSave* ProfileSave = Cast<UFPSProfileSave>(UGameplayStatics::CreateSaveGameObject(UFPSProfileSave::StaticClass()));
+		ProfileSave->PlayersProfileData = GameInstance->PlayersProfileData;
+		ProfileSave->LastChosenPlayerName = GameInstance->ChosenPlayerName;
+		UGameplayStatics::SaveGameToSlot(ProfileSave, TEXT("Profiles"), 0);
+	}
+}
+
+void AFPSPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	SetMouseSensitivity();
+}
+
+void AFPSPlayerController::SetMouseSensitivity()
+{
+	float NewMouseSensitivity = Cast<UFPSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->MouseSensitivity;
+	PlayerInput->SetMouseSensitivity(NewMouseSensitivity);
 }
 

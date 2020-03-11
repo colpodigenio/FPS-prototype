@@ -10,6 +10,7 @@
 #include "RespawnComponent.h"
 #include "FPSAIController.h"
 #include "FPSPlayerController.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UHealthComponent::UHealthComponent()
 	:HealthMax(100), HealthMaxBoosted(200), Health(HealthMax), ArmorMax(100), Armor(25), bIsDead(false), bIsRegenerating(false), HealthRegenerationDelta(2), RegenerationRate(2.0f) {}
@@ -109,7 +110,11 @@ void UHealthComponent::StopRevertHealthToMaxTimer()
 void UHealthComponent::Die()
 {
 	bIsDead = true;
-	Cast<AFPSCharacter>(GetOwner())->GetCurrentWeapon()->GetWeaponMesh()->SetSimulatePhysics(true);
+	USkeletalMeshComponent* WeaponMesh = Cast<AFPSCharacter>(GetOwner())->GetCurrentWeapon()->GetWeaponMesh();
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	WeaponMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	WeaponMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	WeaponMesh->SetSimulatePhysics(true);
 	GetOwner()->Destroy();
 }
 

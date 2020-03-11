@@ -25,8 +25,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void HideScoreboard();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+protected:
+
+	virtual void BeginPlay() override;
+
 private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UControllerComponentsContainer* ContrCompContainer;	
+	void SetMouseSensitivity();
 };

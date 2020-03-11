@@ -3,6 +3,7 @@
 #include "FPSGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "FPSProfileSave.h"
+#include "FPSConfigSave.h"
 
 void UFPSGameInstance::Init()
 {
@@ -12,6 +13,11 @@ void UFPSGameInstance::Init()
 	{
 		PlayersProfileData = ProfileSave->PlayersProfileData;
 		ChosenPlayerName = ProfileSave->LastChosenPlayerName;
+	}
+	UFPSConfigSave* ConfigSave = Cast<UFPSConfigSave>(UGameplayStatics::LoadGameFromSlot(TEXT("Config"), 0));
+	if (ConfigSave->IsValidLowLevel())
+	{
+		MouseSensitivity = ConfigSave->MouseSensitivity;
 	}
 	BotDifficulty = EBotDifficulty::Easy;
 	NumberOfPlayers = 2;

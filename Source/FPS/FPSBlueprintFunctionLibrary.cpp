@@ -4,6 +4,9 @@
 #include "FPSBlueprintFunctionLibrary.h"
 #include "FPS.h"
 #include "ConfigCacheIni.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerInput.h"
 
 void UFPSBlueprintFunctionLibrary::LoadInputConfig(UObject* Obj, FString Filename /*= NULL*/)
 {
@@ -33,4 +36,16 @@ void UFPSBlueprintFunctionLibrary::LoadInputConfig(UObject* Obj, FString Filenam
 // 		Obj->ReloadConfig(NULL, *Obj->GetDefaultConfigFilename());
 // 		PRINT("%s", *Obj->GetDefaultConfigFilename())
 // 	}
+}
+
+float UFPSBlueprintFunctionLibrary::GetMouseSensitivity()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GEngine->GameViewport->GetWorld(), 0);
+	return PC->PlayerInput->GetMouseSensitivityX();
+}
+
+void UFPSBlueprintFunctionLibrary::SetMouseSensitivity(float NewSensitivity)
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GEngine->GameViewport->GetWorld(), 0);
+	PC->PlayerInput->SetMouseSensitivity(NewSensitivity, NewSensitivity);
 }

@@ -13,4 +13,9 @@ class FPS_API UFPSBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
 	
 	UFUNCTION(BlueprintCallable)
 	static void LoadInputConfig(UObject* Obj, FString Filename);
+
+	UFUNCTION(BlueprintPure)
+	static float GetMouseSensitivity();
+	UFUNCTION(BlueprintCallable)
+	static void SetMouseSensitivity(float NewSensitivity);
 };

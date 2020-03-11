@@ -24,6 +24,7 @@ AFPSGameMode::AFPSGameMode()
 		id++;
 	}
 	AIControllerClass = AAIController::StaticClass();
+	bHasMatchPlayed = false;
 }
 
 void AFPSGameMode::BeginPlay()
